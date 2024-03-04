@@ -1,12 +1,12 @@
 package main
 
 import (
-	"encoding/json"
 	"html/template"
 	"log"
 	"net/http"
 	"os"
 	"path"
+	"strings"
 )
 
 const (
@@ -36,24 +36,10 @@ func loadPage(w http.ResponseWriter, page string) {
 func pageHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("new handled request from %s", r.RemoteAddr)
 	log.Printf("attempting to open %s", r.RequestURI)
-	switch r.RequestURI {
-	case "/":
-		loadPage(w, "root")
+	if strings.HasPrefix(r.RequestURI, "/api") {
+		handleRequest(w, r)
 		return
-	case "/api/gettasks":
-		token := r.Header.Get("token")
-
-		if !validToken(token) {
-			w.WriteHeader(http.StatusUnauthorized)
-			w.Write([]byte("401 - unauthorized"))
-			return
-		}
-
-		w.Header().Set("Content-Type", "application/json")
-
-		json.NewEncoder(w).Encode(getAllTasks())
-		return
-	default:
+	} else {
 		loadPage(w, r.RequestURI[1:])
 		return
 	}
