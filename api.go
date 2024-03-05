@@ -24,6 +24,8 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 	switch r.RequestURI[4:] {
 	case "gettasks":
 		json.NewEncoder(w).Encode(getAllTasks())
+	case "getweather":
+		//json.NewEncoder(w).Encode(getWeather())
 	default:
 		http.Error(w, "404 page not found", http.StatusNotFound)
 	}

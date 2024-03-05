@@ -76,8 +76,5 @@ func test() {
 	if err != nil {
 		fmt.Printf("ERROR: %s\n", err.Error())
 	}
-	//current := data["current"]
-	//temp_f := current["temp_f"]
 	fmt.Print(weather)
-	return
 }
