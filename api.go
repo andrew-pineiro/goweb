@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 )
 
@@ -18,11 +19,12 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("401 - unauthorized"))
 		return
 	}
-
+	log.Printf("Authorized client %s", r.RemoteAddr)
 	w.Header().Set("Content-Type", "application/json")
 
 	switch r.RequestURI[4:] {
 	case "gettasks":
+		log.Printf("Attempting to get all tasks")
 		json.NewEncoder(w).Encode(getAllTasks())
 	case "getweather":
 		//json.NewEncoder(w).Encode(getWeather())
