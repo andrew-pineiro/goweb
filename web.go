@@ -15,6 +15,11 @@ const (
 
 func loadPage(w http.ResponseWriter, page string) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+
+	if page == "/" {
+		page = "root"
+	}
+
 	file := path.Join(PageRoot, page+".html")
 
 	if _, err := os.Stat(file); err != nil {
