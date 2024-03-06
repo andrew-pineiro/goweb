@@ -23,10 +23,10 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	log.Printf("Running switch statement on %s", r.RequestURI[4:])
 	switch r.RequestURI[4:] {
-	case "gettasks":
+	case "/gettasks":
 		log.Printf("Attempting to get all tasks")
 		json.NewEncoder(w).Encode(getAllTasks())
-	case "getweather":
+	case "/getweather":
 		//json.NewEncoder(w).Encode(getWeather())
 	default:
 		http.Error(w, "404 page not found", http.StatusNotFound)
