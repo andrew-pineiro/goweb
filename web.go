@@ -16,7 +16,7 @@ const (
 func loadPage(w http.ResponseWriter, page string) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
-	if page == "/" {
+	if page == "" {
 		page = "root"
 	}
 
