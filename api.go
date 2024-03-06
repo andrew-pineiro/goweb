@@ -21,7 +21,7 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Printf("Authorized client %s", r.RemoteAddr)
 	w.Header().Set("Content-Type", "application/json")
-
+	log.Printf("Running switch statement on %s", r.RemoteAddr[4:])
 	switch r.RequestURI[4:] {
 	case "gettasks":
 		log.Printf("Attempting to get all tasks")

@@ -43,7 +43,7 @@ func loadPage(w http.ResponseWriter, page string) {
 }
 
 func pageHandler(w http.ResponseWriter, r *http.Request) {
-	log.Printf("new handled request from %s for %s", r.RemoteAddr, r.RequestURI)
+	log.Printf("new request from %s for %s", r.RemoteAddr, r.RequestURI)
 
 	if strings.HasPrefix(r.RequestURI, "/api/") {
 		log.Printf("Handling API Request to %s", r.RequestURI)
