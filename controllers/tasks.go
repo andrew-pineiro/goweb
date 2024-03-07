@@ -1,4 +1,4 @@
-package main
+package controllers
 
 import (
 	"bufio"
@@ -6,6 +6,8 @@ import (
 	"os"
 	"strings"
 )
+
+const TaskFilePath = "data/tasks.csv"
 
 type Task struct {
 	Task        string
@@ -23,27 +25,28 @@ func convertLinetoTask(line string) Task {
 	return task
 }
 func readTaskLines(path string) ([]string, error) {
+	var lines []string
 	file, err := os.Open(path)
 	if err != nil {
-		log.Print("ERROR: can't open", &file)
+		return lines, err
 	}
 	defer file.Close()
 
-	var lines []string
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		lines = append(lines, scanner.Text())
 	}
 	return lines, scanner.Err()
 }
-func getAllTasks() []Task {
+func GetAllTasks() ([]Task, error) {
 	var tasks []Task
 	lines, err := readTaskLines(TaskFilePath)
 	if err != nil {
-		log.Print("ERROR: cannot read lines in file", TaskFilePath)
+		log.Printf("ERROR: %s", err)
+		return tasks, err
 	}
 	for _, line := range lines[1:] {
 		tasks = append(tasks, convertLinetoTask(line))
 	}
-	return tasks
+	return tasks, err
 }

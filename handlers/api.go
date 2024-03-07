@@ -1,17 +1,17 @@
-package main
+package handlers
 
 import (
 	"encoding/json"
+	"goweb/controllers"
 	"log"
 	"net/http"
 )
 
 const (
-	Token        = "abc123"
-	TaskFilePath = "data/tasks.csv"
+	Token = "abc123"
 )
 
-func handleRequest(w http.ResponseWriter, r *http.Request) {
+func APIHandler(w http.ResponseWriter, r *http.Request) {
 	token := r.Header.Get("token")
 
 	if !validToken(token) {
@@ -19,13 +19,19 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("401 - unauthorized"))
 		return
 	}
-	log.Printf("Authorized client %s", r.RemoteAddr)
+	log.Printf("AUTHORIZED: %s", r.RemoteAddr)
+
 	w.Header().Set("Content-Type", "application/json")
-	log.Printf("Running switch statement on %s", r.RequestURI[4:])
+
+	log.Printf("%s: %s", r.Method, r.RequestURI)
 	switch r.RequestURI[4:] {
 	case "/gettasks":
-		log.Printf("Attempting to get all tasks")
-		json.NewEncoder(w).Encode(getAllTasks())
+		data, err := controllers.GetAllTasks()
+		if err != nil {
+			http.Error(w, "500 internal server error", http.StatusInternalServerError)
+			break
+		}
+		json.NewEncoder(w).Encode(data)
 	case "/getweather":
 		//json.NewEncoder(w).Encode(getWeather())
 	default:

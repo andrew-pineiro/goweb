@@ -4,6 +4,8 @@ import (
 	"log"
 	"net/http"
 
+	"goweb/handlers"
+
 	"github.com/gorilla/mux"
 )
 
@@ -20,13 +22,14 @@ func main() {
 	router.PathPrefix("/js/").Handler(http.StripPrefix("/js/", http.FileServer(http.Dir("./www/js"))))
 
 	//HTML Pages
-	router.HandleFunc("/", pageHandler).Methods("GET")
-	router.HandleFunc("/test", pageHandler).Methods("GET")
+	router.HandleFunc("/", handlers.LoadPage).Methods("GET")
+	router.HandleFunc("/test", handlers.LoadPage).Methods("GET")
 
 	//API Endpoints
-	router.HandleFunc("/api/gettasks", pageHandler).Methods("GET")
+	router.HandleFunc("/api/gettasks", handlers.APIHandler).Methods("GET")
 
 	router.NotFoundHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("NOT FOUND: %s", r.RequestURI)
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte("404 page not found"))
 	})
@@ -36,7 +39,7 @@ func main() {
 		Handler: router,
 	}
 
-	log.Printf("starting http server on port %s", Port)
+	log.Printf("START: PORT %s", Port)
 	err := server.ListenAndServe()
 
 	if err != nil {
