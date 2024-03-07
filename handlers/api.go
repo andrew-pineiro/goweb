@@ -19,7 +19,7 @@ func APIHandler(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("401 - unauthorized"))
 		return
 	}
-	log.Printf("AUTHORIZED: %s", r.RemoteAddr)
+	log.Printf("%s AUTHORIZED TOKEN %s", r.RemoteAddr, token)
 
 	w.Header().Set("Content-Type", "application/json")
 

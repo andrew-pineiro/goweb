@@ -33,7 +33,7 @@ func main() {
 	router.HandleFunc("/api/gettasks", handlers.APIHandler).Methods("GET")
 
 	router.NotFoundHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Printf("NOT FOUND: %s", r.RequestURI)
+		log.Printf("%s NOT FOUND: %s", r.RemoteAddr, r.RequestURI)
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte("404 page not found"))
 	})
