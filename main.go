@@ -20,10 +20,14 @@ func main() {
 	//Static Files
 	router.PathPrefix("/images/").Handler(http.StripPrefix("/images/", http.FileServer(http.Dir("./www/images"))))
 	router.PathPrefix("/js/").Handler(http.StripPrefix("/js/", http.FileServer(http.Dir("./www/js"))))
+	router.PathPrefix("/content/").Handler(http.StripPrefix("/js/", http.FileServer(http.Dir("./www/content"))))
 
 	//HTML Pages
 	router.HandleFunc("/", handlers.LoadPage).Methods("GET")
 	router.HandleFunc("/test", handlers.LoadPage).Methods("GET")
+
+	//Redirects
+	router.HandleFunc("/favicon.ico", handlers.Redirects)
 
 	//API Endpoints
 	router.HandleFunc("/api/gettasks", handlers.APIHandler).Methods("GET")

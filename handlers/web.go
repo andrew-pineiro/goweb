@@ -12,6 +12,13 @@ const (
 	PageRoot = "www"
 )
 
+func Redirects(w http.ResponseWriter, r *http.Request) {
+	switch r.RequestURI {
+	case "/favicon.ico":
+		http.Redirect(w, r, "images/favicon.ico", http.StatusMovedPermanently)
+	}
+}
+
 func LoadPage(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	page := r.RequestURI[1:]
