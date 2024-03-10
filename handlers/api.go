@@ -11,12 +11,11 @@ import (
 var Token string
 
 func SetToken() error {
-	tk, err := os.ReadFile("token")
+	tk, err := os.ReadFile("token.secret")
 	if err != nil {
 		return err
 	}
 	Token = string(tk)
-	log.Printf("SET TOKEN TO %s", Token)
 	return nil
 }
 func APIHandler(w http.ResponseWriter, r *http.Request) {
