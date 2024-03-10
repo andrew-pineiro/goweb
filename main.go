@@ -24,6 +24,7 @@ func main() {
 
 	//HTML Pages
 	router.HandleFunc("/index.html", handlers.LoadPage).Methods("GET")
+	router.HandleFunc("/contact.html", handlers.LoadPage).Methods("GET")
 
 	//Redirects
 	router.HandleFunc("/favicon.ico", handlers.Redirects)
@@ -31,6 +32,7 @@ func main() {
 
 	//API Endpoints
 	router.HandleFunc("/api/gettasks", handlers.APIHandler).Methods("GET")
+	router.HandleFunc("/api/contact", handlers.APIHandler)
 
 	router.NotFoundHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		log.Printf("%s NOT FOUND: %s", r.RemoteAddr, r.RequestURI)

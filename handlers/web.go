@@ -31,7 +31,7 @@ func LoadPage(w http.ResponseWriter, r *http.Request) {
 	file := path.Join(PageRoot, page)
 	baseFile := path.Join(PageRoot, BaseFile)
 
-	//check is file exists
+	//check if file exists
 	if _, err := os.Stat(file); err != nil {
 		log.Printf("%s NOT FOUND: %s", r.RemoteAddr, file)
 		http.Error(w, "404 page not found", http.StatusNotFound)
