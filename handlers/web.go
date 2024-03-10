@@ -10,23 +10,26 @@ import (
 
 const (
 	PageRoot = "www"
+	BaseFile = "base.html"
 )
 
 func Redirects(w http.ResponseWriter, r *http.Request) {
+	log.Printf("%s REDIRECT: %s", r.RemoteAddr, r.RequestURI)
+
 	switch r.RequestURI {
 	case "/favicon.ico":
 		http.Redirect(w, r, "images/favicon.ico", http.StatusMovedPermanently)
+	case "/":
+		http.Redirect(w, r, "index.html", http.StatusMovedPermanently)
 	}
 }
 
 func LoadPage(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	page := r.RequestURI[1:]
-	if page == "" {
-		page = "root"
-	}
 
-	file := path.Join(PageRoot, page+".html")
+	page := r.RequestURI[1:]
+	file := path.Join(PageRoot, page)
+	baseFile := path.Join(PageRoot, BaseFile)
 
 	//check is file exists
 	if _, err := os.Stat(file); err != nil {
@@ -36,14 +39,14 @@ func LoadPage(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Printf("%s LOAD: %s", r.RemoteAddr, file)
 
-	tmpl, err := template.ParseFiles(file)
+	tmpl, err := template.ParseFiles(file, baseFile)
 	if err != nil {
 		log.Printf("%s ERROR: %s", r.RemoteAddr, err.Error())
 		http.Error(w, "500 internal server error", http.StatusInternalServerError)
 		return
 	}
 
-	if err := tmpl.Execute(w, ""); err != nil {
+	if err := tmpl.ExecuteTemplate(w, "base", ""); err != nil {
 		log.Printf("%s ERROR: %s", r.RemoteAddr, err.Error())
 		http.Error(w, "500 internal server error", http.StatusInternalServerError)
 		return

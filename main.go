@@ -23,8 +23,7 @@ func main() {
 	router.PathPrefix("/content/").Handler(http.StripPrefix("/content/", http.FileServer(http.Dir("./www/content"))))
 
 	//HTML Pages
-	router.HandleFunc("/", handlers.LoadPage).Methods("GET")
-	router.HandleFunc("/test", handlers.LoadPage).Methods("GET")
+	router.HandleFunc("/index.html", handlers.LoadPage).Methods("GET")
 
 	//Redirects
 	router.HandleFunc("/favicon.ico", handlers.Redirects)
