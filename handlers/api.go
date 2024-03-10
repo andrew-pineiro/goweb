@@ -5,12 +5,20 @@ import (
 	"goweb/controllers"
 	"log"
 	"net/http"
+	"os"
 )
 
-const (
-	Token = "abc123"
-)
+var Token string
 
+func SetToken() error {
+	tk, err := os.ReadFile("token")
+	if err != nil {
+		return err
+	}
+	Token = string(tk)
+	log.Printf("SET TOKEN TO %s", Token)
+	return nil
+}
 func APIHandler(w http.ResponseWriter, r *http.Request) {
 	token := r.Header.Get("token")
 
@@ -23,7 +31,7 @@ func APIHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 
-	log.Printf("%s: %s", r.Method, r.RequestURI)
+	log.Printf("%s %s: %s", r.RemoteAddr, r.Method, r.RequestURI)
 
 	switch r.RequestURI[4:] {
 	case "/gettasks":

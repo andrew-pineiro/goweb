@@ -17,8 +17,7 @@ document.addEventListener("DOMContentLoaded", function() {
       fetch("/api/contact", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
-          "Token": "abc123"
+          "Content-Type": "application/json"
         },
         body: JSON.stringify(jsonData)
       })

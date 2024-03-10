@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 
 	"goweb/handlers"
 
@@ -13,8 +14,15 @@ const (
 	Port = "8080"
 )
 
+var AuthToken string
+
 func main() {
 
+	err := handlers.SetToken()
+	if err != nil {
+		log.Printf("ERROR: unable to get token, %s", err)
+		os.Exit(1)
+	}
 	router := mux.NewRouter()
 
 	//Static Files
@@ -45,8 +53,8 @@ func main() {
 		Handler: router,
 	}
 
-	log.Printf("START: PORT %s", Port)
-	err := server.ListenAndServe()
+	log.Printf("START: PORT %s; TOKEN: %s", Port, handlers.Token)
+	err = server.ListenAndServe()
 
 	if err != nil {
 		log.Fatal(err)
