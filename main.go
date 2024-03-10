@@ -27,6 +27,7 @@ func main() {
 
 	//Redirects
 	router.HandleFunc("/favicon.ico", handlers.Redirects)
+	router.HandleFunc("/", handlers.Redirects)
 
 	//API Endpoints
 	router.HandleFunc("/api/gettasks", handlers.APIHandler).Methods("GET")
