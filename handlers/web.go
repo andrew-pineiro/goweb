@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"path"
+	"strings"
 
 	"github.com/gorilla/mux"
 )
@@ -30,9 +31,11 @@ func LoadPage(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
 	page := mux.Vars(r)["page"]
-	log.Printf("Attempting to load page %s", page)
+	if !strings.ContainsAny(page, ".") {
+		page += ".html"
+	}
 
-	file := path.Join(PageRoot, page)
+	file := path.Join(PageRoot, strings.ToLower(page))
 	baseFile := path.Join(PageRoot, BaseFile)
 
 	//check if file exists

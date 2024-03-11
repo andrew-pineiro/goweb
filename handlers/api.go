@@ -22,6 +22,7 @@ func APIHandler(w http.ResponseWriter, r *http.Request) {
 	token := r.Header.Get("token")
 
 	if !validToken(token) {
+		log.Printf("%s UNAUTHORIZED: %s", r.RemoteAddr, r.RequestURI)
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Write([]byte("401 - unauthorized"))
 		return
