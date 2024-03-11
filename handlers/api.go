@@ -39,6 +39,7 @@ func APIHandler(w http.ResponseWriter, r *http.Request) {
 
 	log.Printf("%s %s: %s", r.RemoteAddr, r.Method, r.RequestURI)
 
+	//TODO: implement rate limiting
 	switch endpoint {
 	case "gettasks":
 		if checkToken(token, w, r) {
@@ -52,7 +53,7 @@ func APIHandler(w http.ResponseWriter, r *http.Request) {
 	case "contact":
 		switch r.Method {
 		case http.MethodGet:
-			//TODO: not implemenented GET contact
+			//TODO: implement GET endpoint for contact
 			break
 		case http.MethodPost:
 			var msg controllers.Message

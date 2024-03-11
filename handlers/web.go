@@ -28,7 +28,7 @@ func Redirects(w http.ResponseWriter, r *http.Request) {
 }
 func LoadJSFile(w http.ResponseWriter, r *http.Request) {
 	file := mux.Vars(r)["file"]
-	http.ServeFile(w, r, "www/js/"+file)
+	http.ServeFile(w, r, PageRoot+"/js/"+file)
 }
 func LoadPage(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")

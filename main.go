@@ -34,6 +34,8 @@ func main() {
 
 	//Static Files
 	router.PathPrefix("/static").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./www/static"))))
+	//JS Files
+	router.HandleFunc("/js/{file}", handlers.LoadJSFile)
 
 	//Redirects
 	router.HandleFunc("/favicon.ico", handlers.Redirects)
@@ -41,9 +43,6 @@ func main() {
 
 	//API Endpoints
 	router.HandleFunc("/api/{endpoint}", handlers.APIHandler)
-
-	//JS Files
-	router.HandleFunc("/js/{file}", handlers.LoadJSFile)
 
 	//HTML Pages
 	router.HandleFunc("/{page}", handlers.LoadPage).Methods("GET")
