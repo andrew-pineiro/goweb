@@ -1,5 +1,7 @@
 package controllers
 
+import "log"
+
 type Message struct {
 	Name  string
 	Email string
@@ -8,6 +10,6 @@ type Message struct {
 
 func RecvMessage(msg Message) error {
 	var err error
-	//TODO: Get this stuff saved to a DB
+	log.Println(msg)
 	return err
 }

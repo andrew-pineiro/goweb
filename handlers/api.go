@@ -6,6 +6,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/gorilla/mux"
 )
 
 var Token string
@@ -18,30 +20,36 @@ func SetToken() error {
 	Token = string(tk)
 	return nil
 }
-func APIHandler(w http.ResponseWriter, r *http.Request) {
-	token := r.Header.Get("token")
-
-	if !validToken(token) {
+func checkToken(token string, w http.ResponseWriter, r *http.Request) bool {
+	if !(token == Token) {
 		log.Printf("%s UNAUTHORIZED: %s", r.RemoteAddr, r.RequestURI)
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Write([]byte("401 - unauthorized"))
-		return
+		return false
+	} else {
+		log.Printf("%s AUTHORIZED TOKEN %s", r.RemoteAddr, token)
+		return true
 	}
-	log.Printf("%s AUTHORIZED TOKEN %s", r.RemoteAddr, token)
+}
+func APIHandler(w http.ResponseWriter, r *http.Request) {
+	token := r.Header.Get("token")
+	endpoint := mux.Vars(r)["endpoint"]
 
 	w.Header().Set("Content-Type", "application/json")
 
 	log.Printf("%s %s: %s", r.RemoteAddr, r.Method, r.RequestURI)
 
-	switch r.RequestURI[4:] {
-	case "/gettasks":
-		data, err := controllers.GetAllTasks()
-		if err != nil {
-			http.Error(w, "500 internal server error", http.StatusInternalServerError)
-			break
+	switch endpoint {
+	case "gettasks":
+		if checkToken(token, w, r) {
+			data, err := controllers.GetAllTasks()
+			if err != nil {
+				http.Error(w, "500 internal server error", http.StatusInternalServerError)
+				break
+			}
+			json.NewEncoder(w).Encode(data)
 		}
-		json.NewEncoder(w).Encode(data)
-	case "/contact":
+	case "contact":
 		switch r.Method {
 		case http.MethodGet:
 			//TODO: not implemenented GET contact
@@ -65,7 +73,4 @@ func APIHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "404 page not found", http.StatusNotFound)
 	}
 
-}
-func validToken(token string) bool {
-	return token == Token
 }
