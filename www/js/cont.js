@@ -21,16 +21,10 @@ document.addEventListener("DOMContentLoaded", function() {
         },
         body: JSON.stringify(jsonData)
       })
-      .then(response => {
-        if(!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.json();
-      })
       .then(contactForm.reset())
       .catch(error => {
         console.error("There was a problem with the fetch operation:", error);
-        //alert("Oops! Something went wrong. Please try again later.");
+        alert("Oops! Something went wrong. Please try again later.");
       });
     });
   });

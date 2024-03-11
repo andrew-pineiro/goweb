@@ -33,9 +33,7 @@ func main() {
 	router := mux.NewRouter()
 
 	//Static Files
-	router.PathPrefix("/images/").Handler(http.StripPrefix("/images/", http.FileServer(http.Dir("./www/images"))))
-	router.PathPrefix("/js/").Handler(http.StripPrefix("/js/", http.FileServer(http.Dir("./www/js"))))
-	router.PathPrefix("/content/").Handler(http.StripPrefix("/content/", http.FileServer(http.Dir("./www/content"))))
+	router.PathPrefix("/static").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./www/static"))))
 
 	//Redirects
 	router.HandleFunc("/favicon.ico", handlers.Redirects)
@@ -43,6 +41,9 @@ func main() {
 
 	//API Endpoints
 	router.HandleFunc("/api/{endpoint}", handlers.APIHandler)
+
+	//JS Files
+	router.HandleFunc("/js/{file}", handlers.LoadJSFile)
 
 	//HTML Pages
 	router.HandleFunc("/{page}", handlers.LoadPage).Methods("GET")

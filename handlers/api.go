@@ -58,11 +58,12 @@ func APIHandler(w http.ResponseWriter, r *http.Request) {
 			var msg controllers.Message
 			err := json.NewDecoder(r.Body).Decode(&msg)
 			if err != nil {
-				log.Printf("ERROR: could not decode json %s", err)
+				log.Printf("ERROR: could not decode json; %s", err)
 				http.Error(w, "500 internal server error", http.StatusInternalServerError)
+				break
 			}
 
-			err = controllers.RecvMessage(msg)
+			err = controllers.RecvMessage(msg, r)
 			if err != nil {
 				log.Printf("ERROR: %s", err)
 				http.Error(w, "500 internal server error", http.StatusInternalServerError)

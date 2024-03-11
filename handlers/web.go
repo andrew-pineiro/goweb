@@ -21,12 +21,15 @@ func Redirects(w http.ResponseWriter, r *http.Request) {
 
 	switch r.RequestURI {
 	case "/favicon.ico":
-		http.Redirect(w, r, "images/favicon.ico", http.StatusMovedPermanently)
+		http.Redirect(w, r, "/static/images/favicon.ico", http.StatusMovedPermanently)
 	case "/":
 		http.Redirect(w, r, "index.html", http.StatusMovedPermanently)
 	}
 }
-
+func LoadJSFile(w http.ResponseWriter, r *http.Request) {
+	file := mux.Vars(r)["file"]
+	http.ServeFile(w, r, "www/js/"+file)
+}
 func LoadPage(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
