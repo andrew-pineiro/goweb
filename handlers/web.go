@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"os"
 	"path"
+
+	"github.com/gorilla/mux"
 )
 
 const (
@@ -27,7 +29,9 @@ func Redirects(w http.ResponseWriter, r *http.Request) {
 func LoadPage(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
-	page := r.RequestURI[1:]
+	page := mux.Vars(r)["page"]
+	log.Printf("Attempting to load page %s", page)
+
 	file := path.Join(PageRoot, page)
 	baseFile := path.Join(PageRoot, BaseFile)
 
