@@ -13,6 +13,7 @@ type Message struct {
 
 func RecvMessage(msg Message, r *http.Request) error {
 	var err error
+	//TODO(#3): Implement storing in DB
 	log.Println(r.RemoteAddr, "RECIEVED:", msg)
 	return err
 }
