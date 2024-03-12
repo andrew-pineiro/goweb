@@ -16,6 +16,20 @@ const (
 	BaseFile = "base.html"
 )
 
+// Running list of restricted pages that should return a 403 forbidden
+var RestrictedPages []string = []string{
+	"base.html",
+}
+
+func checkRestrictedPages(page string) bool {
+	restPages := RestrictedPages
+	for i := 0; i < len(restPages); i++ {
+		if restPages[i] == page {
+			return true
+		}
+	}
+	return false
+}
 func Redirects(w http.ResponseWriter, r *http.Request) {
 	log.Printf("%s REDIRECT: %s", r.RemoteAddr, r.RequestURI)
 
@@ -31,13 +45,20 @@ func LoadJSFile(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, PageRoot+"/js/"+file)
 }
 func LoadPage(w http.ResponseWriter, r *http.Request) {
+	var data string
+	//TODO(#4): implement data injection to pages
+
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
 	page := mux.Vars(r)["page"]
 	if !strings.ContainsAny(page, ".") {
 		page += ".html"
 	}
-
+	if checkRestrictedPages(page) {
+		http.Error(w, "403 forbidden", http.StatusForbidden)
+		log.Printf("%s RESTRICTED: %s", r.RemoteAddr, r.RequestURI)
+		return
+	}
 	file := path.Join(PageRoot, strings.ToLower(page))
 	baseFile := path.Join(PageRoot, BaseFile)
 
