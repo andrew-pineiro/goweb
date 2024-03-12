@@ -36,17 +36,14 @@ func main() {
 	router.PathPrefix("/static").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./www/static"))))
 	//JS Files
 	router.HandleFunc("/js/{file}", handlers.LoadJSFile)
-
 	//Redirects
 	router.HandleFunc("/favicon.ico", handlers.Redirects)
 	router.HandleFunc("/", handlers.Redirects)
-
 	//API Endpoints
 	router.HandleFunc("/api/{endpoint}", handlers.APIHandler)
-
 	//HTML Pages
 	router.HandleFunc("/{page}", handlers.LoadPage).Methods("GET")
-
+	//NOT FOUND
 	router.NotFoundHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		log.Printf("%s NOT FOUND: %s", r.RemoteAddr, r.RequestURI)
 		w.WriteHeader(http.StatusNotFound)
