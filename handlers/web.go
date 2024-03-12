@@ -55,8 +55,9 @@ func LoadPage(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "500 internal server error", http.StatusInternalServerError)
 		return
 	}
-
-	if err := tmpl.ExecuteTemplate(w, "base", ""); err != nil {
+	//TODO(#4): implement data injection to pages
+	data := ""
+	if err := tmpl.ExecuteTemplate(w, "base", data); err != nil {
 		log.Printf("%s ERROR: %s", r.RemoteAddr, err.Error())
 		http.Error(w, "500 internal server error", http.StatusInternalServerError)
 		return
