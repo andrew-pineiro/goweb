@@ -4,7 +4,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strings"
 
 	"goweb/handlers"
 
@@ -17,12 +16,6 @@ const (
 
 var AuthToken string
 
-func CaselessMatcher(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		r.URL.Path = strings.ToLower(r.URL.Path)
-		next.ServeHTTP(w, r)
-	})
-}
 func main() {
 
 	err := handlers.SetToken()
