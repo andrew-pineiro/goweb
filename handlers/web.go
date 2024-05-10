@@ -50,15 +50,23 @@ func LoadPage(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
+	if !CheckRateCount(r.RemoteAddr) {
+		log.Printf("%s RATE LIMIT EXCEEDED", r.RemoteAddr)
+		http.Error(w, "429 too many request", http.StatusTooManyRequests)
+		return
+	}
+
 	page := mux.Vars(r)["page"]
 	if !strings.ContainsAny(page, ".") {
 		page += ".html"
 	}
+
 	if checkRestrictedPages(page) {
 		http.Error(w, "403 forbidden", http.StatusForbidden)
 		log.Printf("%s RESTRICTED: %s", r.RemoteAddr, r.RequestURI)
 		return
 	}
+
 	file := path.Join(PageRoot, strings.ToLower(page))
 	baseFile := path.Join(PageRoot, BaseFile)
 
