@@ -46,7 +46,6 @@ func APIHandler(w http.ResponseWriter, r *http.Request) {
 
 	log.Printf("%s %s: %s", r.RemoteAddr, r.Method, r.RequestURI)
 
-	//TODO(#1): implement rate limiting
 	switch endpoint {
 	case "gettasks":
 		if checkToken(token, w, r) {
