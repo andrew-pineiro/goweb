@@ -12,8 +12,9 @@ type Rate struct {
 }
 
 const (
-	MAX_RATEMAP_SIZE = 1024
-	RATE_LIMIT       = 10
+	MAX_RATEMAP_SIZE  = 1024
+	RATE_LIMIT        = 10
+	BAN_LIMIT_SECONDS = 10
 )
 
 var GlobalRateMap []Rate
@@ -27,7 +28,7 @@ func checkBanList(index int) bool {
 	rate := GlobalRateMap[index]
 	for i, bannedMF := range GlobalBanList {
 		if rate.IP == bannedMF.IP {
-			if time.Now().After(rate.LastBanDate.Add(10 * time.Second)) {
+			if time.Now().After(rate.LastBanDate.Add(BAN_LIMIT_SECONDS * time.Second)) {
 				GlobalBanList = append(GlobalBanList[:i], GlobalBanList[i+1:]...) //strip element from slice
 				GlobalRateMap[i].Count = 0
 				GlobalRateMap[i].LastBanDate = time.Time{}

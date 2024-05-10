@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/gorilla/mux"
 )
@@ -36,6 +37,12 @@ func APIHandler(w http.ResponseWriter, r *http.Request) {
 	endpoint := mux.Vars(r)["endpoint"]
 
 	w.Header().Set("Content-Type", "application/json")
+
+	if !CheckRateCount(strings.Split(r.RemoteAddr, ":")[0]) {
+		log.Printf("%s RATE LIMIT EXCEEDED", r.RemoteAddr)
+		http.Error(w, "429 too many request", http.StatusTooManyRequests)
+		return
+	}
 
 	log.Printf("%s %s: %s", r.RemoteAddr, r.Method, r.RequestURI)
 
