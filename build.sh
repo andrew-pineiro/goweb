@@ -32,7 +32,7 @@ if [ $? -eq 4 ]; then
   systemctl enable $SVCNAME
 fi
 
-if [ $? -eq 3 ]; then
+if [ ! $? -eq 0 ]; then
   systemctl start $SVCNAME
 fi
 
