@@ -6,8 +6,8 @@ DOCKNAME="goweb_1"
 IMGNAME="goweb"
 SVCNAME="weblogs.service"
 SVCPATH="/logging/weblogs.service"
-WEBPATH = "/etc/website/"
-LOGPATH = "/etc/website/logs/"
+WEBPATH="/etc/website/"
+LOGPATH="/etc/website/logs/"
 LOGSHPATH="/logging/logs.sh"
 
 
