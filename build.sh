@@ -26,11 +26,15 @@ if [ ! -d $LOGPATH ]; then
     mkdir $LOGPATH
 fi
 
-if [ ! service --status-all | grep -Fq $SVCNAME ]; then    
+systemctl status $SVCNAME >/dev/null
+if [ $? -eq 4 ]; then    
   cp $SVCPATH /etc/systemd/system/
   systemctl enable $SVCNAME
 fi
 
+if [ $? -eq 3 ]; then
+  systemctl start $SVCNAME
+fi
 
 docker build --tag $IMGNAME $APPDIR
 
