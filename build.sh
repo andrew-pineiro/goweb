@@ -5,10 +5,30 @@ APPDIR="/www"
 DOCKNAME="goweb_1"
 IMGNAME="goweb"
 SVCNAME="weblogs.service"
+SVCPATH="/logging/weblogs.service"
+WEBPATH = "/etc/website/"
+LOGPATH = "/etc/website/logs/"
+LOGSHPATH="/logging/logs.sh"
+
+
+if ![ -d $WEBPATH ]; then
+   mkdir $WEBPATH
+   cp $LOGSHPATH $WEBPATH
+fi
+
+if ![ -d $LOGPATH ]; then
+    mkdir $LOGPATH
+fi
+
+if !service --status-all | grep -Fq $SVCNAME; then    
+  cp $SVCPATH /etc/systemd/system/
+  systemctl enable $SVCNAME
+fi
 
 if [ -d $APPDIR ]; then
     rm $APPDIR -r
 fi
+
 mkdir $APPDIR
 cp ./ $APPDIR -r
 

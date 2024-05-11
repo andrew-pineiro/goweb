@@ -1,0 +1,9 @@
+[Unit]
+Description=weblogs service
+After=network-online.target
+
+[Service]
+ExecStart=/etc/website/logs.sh
+
+[Install]
+WantedBy=multi-user.target
