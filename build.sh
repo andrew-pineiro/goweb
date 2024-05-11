@@ -8,8 +8,14 @@ SVCNAME="weblogs.service"
 SVCPATH="/logging/weblogs.service"
 WEBPATH="/etc/website/"
 LOGPATH="/etc/website/logs/"
-LOGSHPATH="/logging/logs.sh"
+LOGSHPATH="/www/logging/logs.sh"
 
+if [ -d $APPDIR ]; then
+    rm $APPDIR -r
+fi
+
+mkdir $APPDIR
+cp ./ $APPDIR -r
 
 if [ ! -d $WEBPATH ]; then
    mkdir $WEBPATH
@@ -20,17 +26,11 @@ if [ ! -d $LOGPATH ]; then
     mkdir $LOGPATH
 fi
 
-if ! service --status-all | grep -Fq $SVCNAME; then    
+if [ ! service --status-all | grep -Fq $SVCNAME ]; then    
   cp $SVCPATH /etc/systemd/system/
   systemctl enable $SVCNAME
 fi
 
-if [ -d $APPDIR ]; then
-    rm $APPDIR -r
-fi
-
-mkdir $APPDIR
-cp ./ $APPDIR -r
 
 docker build --tag $IMGNAME $APPDIR
 
