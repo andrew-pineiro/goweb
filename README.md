@@ -2,7 +2,7 @@
 
 ## Summary
 
-**goweb** is a website engine written in [https://golang.org/](GoLang). Including HTML/JS rendering for websites and an API endpoint for other various tasks. Currently this is being actively used on [www.andrewpineiro.com](www.andrewpineiro.com).
+**goweb** is a website engine written in [GoLang](https://golang.org/). Including HTML/JS rendering for websites and an API endpoint for other various tasks. Currently this is being actively used on [www.andrewpineiro.com](www.andrewpineiro.com).
 
 ## Requirements
 1. This only currently works on Linux (and has only been tested on Debian)
@@ -12,7 +12,7 @@
 
 ## Setup
 
-Ideally, the only setup needed is running the `build.sh` script with root permissions. If this is not the case, please create an [https://github.com/andrew-pineiro/goweb/issues](issue).
+Ideally, the only setup needed is running the `build.sh` script with root permissions. If this is not the case, please create an [issue](https://github.com/andrew-pineiro/goweb/issues).
 
 ### Steps
 1. Checks for root application directory (/www); if found it is deleted.
