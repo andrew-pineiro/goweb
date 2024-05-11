@@ -26,16 +26,6 @@ if [ ! -d $LOGPATH ]; then
     mkdir $LOGPATH
 fi
 
-systemctl status $SVCNAME >/dev/null
-EXITCODE=$?
-if [ $EXITCODE -eq 4 ]; then    
-  cp $SVCPATH /etc/systemd/system/
-  systemctl enable $SVCNAME
-fi
-
-if [ ! $EXITCODE -eq 0 ]; then
-  systemctl start $SVCNAME
-fi
 
 docker build --tag $IMGNAME $APPDIR
 
@@ -44,4 +34,14 @@ if [ $( docker ps -a -f name=$DOCKNAME| wc -l ) -eq 2 ]; then
 fi
 
 docker run -d --name $DOCKNAME -p 80:8080 $IMGNAME:latest
-systemctl restart $SVCNAME 
+
+systemctl status $SVCNAME >/dev/null
+EXITCODE=$?
+if [ $EXITCODE -eq 4 ]; then    
+  cp $SVCPATH /etc/systemd/system/
+  systemctl enable $SVCNAME
+elif [ ! $EXITCODE -eq 0 ]; then
+  systemctl start $SVCNAME
+else
+  systemctl restart $SVCNAME 
+fi
