@@ -1,5 +1,5 @@
 #!/bin/bash
-set -xe
+set -x
 
 APPDIR="/www"
 DOCKNAME="goweb_1"
@@ -27,12 +27,13 @@ if [ ! -d $LOGPATH ]; then
 fi
 
 systemctl status $SVCNAME >/dev/null
-if [ $? -eq 4 ]; then    
+EXITCODE=$?
+if [ $EXITCODE -eq 4 ]; then    
   cp $SVCPATH /etc/systemd/system/
   systemctl enable $SVCNAME
 fi
 
-if [ ! $? -eq 0 ]; then
+if [ ! $EXITCODE -eq 0 ]; then
   systemctl start $SVCNAME
 fi
 
