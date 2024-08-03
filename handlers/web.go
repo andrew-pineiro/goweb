@@ -21,7 +21,7 @@ var RestrictedPages []string = []string{
 	"base.html",
 }
 
-// TODO: hard code pages that require auth into the page itself rather than an array
+// TODO(#7): hard code pages that require auth into the page itself rather than an array
 var AuthorizedPages []string = []string{
 	"admin-panel.html",
 }
@@ -47,7 +47,7 @@ func Redirects(w http.ResponseWriter, r *http.Request) {
 }
 func checkAuthorizedPages(page string, r *http.Request) bool {
 	authPages := AuthorizedPages
-	//TODO: validate tokens against users
+	//TODO(#8): validate tokens against users
 	_, err := r.Cookie("X-Auth-Token")
 	for i := 0; i < len(authPages); i++ {
 		if authPages[i] == page && err != nil {
