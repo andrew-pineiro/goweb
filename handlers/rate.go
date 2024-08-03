@@ -13,7 +13,7 @@ type Rate struct {
 
 const (
 	MAX_RATEMAP_SIZE  = 1024
-	RATE_LIMIT        = 10
+	RATE_LIMIT        = 1000
 	BAN_LIMIT_SECONDS = 10
 )
 
