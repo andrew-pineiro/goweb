@@ -20,5 +20,6 @@ func GenerateToken(user User) string {
 	hasher := sha256.New()
 	hasher.Write([]byte(user.Username))
 	hasher.Write([]byte(string(user.Id)))
+	hasher.Write([]byte(user.PasswordHash))
 	return base64.URLEncoding.EncodeToString(hasher.Sum(nil))
 }
