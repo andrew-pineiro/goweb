@@ -75,6 +75,28 @@ func APIHandler(w http.ResponseWriter, r *http.Request) {
 				log.Printf("ERROR: %s", err)
 				http.Error(w, "500 internal server error", http.StatusInternalServerError)
 			}
+		}
+	case "login":
+		switch r.Method {
+		case http.MethodGet:
+			break
+		case http.MethodPost:
+			var tempUser controllers.User
+			err := json.NewDecoder(r.Body).Decode(&tempUser)
+			if err != nil {
+				log.Printf("ERROR: could not decode json; %s", err)
+				http.Error(w, "500 internal server error", http.StatusInternalServerError)
+				break
+			}
+
+			existingUser := controllers.Login(tempUser.Username, tempUser.Password)
+			if existingUser.Id < 0 {
+				http.Error(w, "invalid username or password", http.StatusForbidden)
+				break
+			}
+
+			log.Printf("%s LOGIN: %s", r.RemoteAddr, existingUser.Username)
+			w.Header().Add("X-Auth-Token", existingUser.AuthToken)
 
 		}
 	default:

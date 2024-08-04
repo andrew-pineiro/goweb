@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 
+	"goweb/controllers"
 	"goweb/handlers"
 
 	"github.com/gorilla/mux"
@@ -24,6 +25,8 @@ func main() {
 		os.Exit(1)
 	}
 	router := mux.NewRouter()
+
+	controllers.LoadUsers()
 
 	//Static Files
 	router.PathPrefix("/static").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./www/static"))))
@@ -50,7 +53,6 @@ func main() {
 
 	log.Printf("START: PORT %s; TOKEN: %s", Port, handlers.Token)
 	err = server.ListenAndServe()
-
 	if err != nil {
 		log.Fatal(err)
 	}

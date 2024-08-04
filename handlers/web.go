@@ -21,6 +21,11 @@ var RestrictedPages []string = []string{
 	"base.html",
 }
 
+// TODO(#7): hard code pages that require auth into the page itself rather than an array
+var AuthorizedPages []string = []string{
+	"admin-panel.html",
+}
+
 func checkRestrictedPages(page string) bool {
 	restPages := RestrictedPages
 	for i := 0; i < len(restPages); i++ {
@@ -39,6 +44,17 @@ func Redirects(w http.ResponseWriter, r *http.Request) {
 	case "/":
 		http.Redirect(w, r, "index.html", http.StatusMovedPermanently)
 	}
+}
+func checkAuthorizedPages(page string, r *http.Request) bool {
+	authPages := AuthorizedPages
+	//TODO(#8): validate tokens against users
+	_, err := r.Cookie("X-Auth-Token")
+	for i := 0; i < len(authPages); i++ {
+		if authPages[i] == page && err != nil {
+			return true
+		}
+	}
+	return false
 }
 func LoadJSFile(w http.ResponseWriter, r *http.Request) {
 	file := mux.Vars(r)["file"]
@@ -64,6 +80,12 @@ func LoadPage(w http.ResponseWriter, r *http.Request) {
 	if checkRestrictedPages(page) {
 		http.Error(w, "403 forbidden", http.StatusForbidden)
 		log.Printf("%s RESTRICTED: %s", r.RemoteAddr, r.RequestURI)
+		return
+	}
+
+	if checkAuthorizedPages(page, r) {
+		http.Error(w, "401 unauthorized", http.StatusUnauthorized)
+		log.Printf("%s UNAUTHORIZED: %s", r.RemoteAddr, r.RequestURI)
 		return
 	}
 
