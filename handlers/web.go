@@ -50,7 +50,6 @@ func Redirects(w http.ResponseWriter, r *http.Request) {
 
 func checkAuthorizedPages(page string, r *http.Request) bool {
 	authPages := AuthorizedPages
-	//TODO(#8): validate tokens against users
 	cookie, err := r.Cookie("X-Auth-Token")
 	rawCookie, _ := url.PathUnescape(cookie.Value)
 	for i := 0; i < len(authPages); i++ {
