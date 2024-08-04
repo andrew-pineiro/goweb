@@ -23,6 +23,7 @@ document.addEventListener("DOMContentLoaded", function() {
           console.log("login successful")
           var expires = (new Date(Date.now()+ 86400*1000)).toUTCString();
           document.cookie = "X-Auth-Token=" + response.headers.get("X-Auth-Token") + "; expires=" + expires + "; path=/"
+          window.location = "/admin-panel"
         }
         else if(response.status === 403) {
           window.alert("invalid username or password")
