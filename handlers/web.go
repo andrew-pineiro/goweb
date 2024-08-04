@@ -1,9 +1,11 @@
 package handlers
 
 import (
+	"goweb/controllers"
 	"html/template"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"path"
 	"strings"
@@ -45,12 +47,16 @@ func Redirects(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "index.html", http.StatusMovedPermanently)
 	}
 }
+
 func checkAuthorizedPages(page string, r *http.Request) bool {
 	authPages := AuthorizedPages
 	//TODO(#8): validate tokens against users
-	_, err := r.Cookie("X-Auth-Token")
+	cookie, err := r.Cookie("X-Auth-Token")
+	rawCookie, _ := url.PathUnescape(cookie.Value)
 	for i := 0; i < len(authPages); i++ {
-		if authPages[i] == page && err != nil {
+		if authPages[i] == page &&
+			(err != nil ||
+				!controllers.CheckAuthToken(rawCookie)) {
 			return true
 		}
 	}

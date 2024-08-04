@@ -62,6 +62,15 @@ func retrieveUser(u string, p string) int {
 	}
 	return -1
 }
+func CheckAuthToken(token string) bool {
+	for _, user := range UsersList.Users {
+		if token == user.AuthToken {
+			return true
+			//return UsersList.Users[i]
+		}
+	}
+	return false
+}
 func validateLogin(u string, p string) User {
 	index := retrieveUser(u, p)
 	if index >= 0 {
