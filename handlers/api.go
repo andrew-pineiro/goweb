@@ -47,14 +47,17 @@ func APIHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("%s %s: %s", r.RemoteAddr, r.Method, r.RequestURI)
 
 	switch endpoint {
-	case "gettasks":
-		if checkToken(token, w, r) {
-			data, err := controllers.GetAllTasks()
-			if err != nil {
-				http.Error(w, "500 internal server error", http.StatusInternalServerError)
-				break
+	case "tasks":
+		switch r.Method {
+		case http.MethodGet:
+			if checkToken(token, w, r) {
+				data, err := controllers.GetAllTasks()
+				if err != nil {
+					http.Error(w, "500 internal server error", http.StatusInternalServerError)
+					break
+				}
+				json.NewEncoder(w).Encode(data)
 			}
-			json.NewEncoder(w).Encode(data)
 		}
 	case "contact":
 		switch r.Method {
