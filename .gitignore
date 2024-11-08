@@ -1,11 +1,12 @@
-*.exe
+bin/
 data/*
 *.secret
 www/content/*
 www/js/*
 www/static/*
 www/*.*
-.vscode/
+
 !www/content/.gitkeep
 !www/js/.gitkeep
 !www/static/.gitkeep
+!data/.gitkeep
