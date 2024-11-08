@@ -1,3 +1,8 @@
 *.exe
 data/*
 *.secret
+www/content/*
+www/js/*
+www/static/*
+www/*.html
+.vscode/
