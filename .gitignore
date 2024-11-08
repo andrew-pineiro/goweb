@@ -4,5 +4,8 @@ data/*
 www/content/*
 www/js/*
 www/static/*
-www/*.html
+www/*.*
 .vscode/
+!www/content/.gitkeep
+!www/js/.gitkeep
+!www/static/.gitkeep
