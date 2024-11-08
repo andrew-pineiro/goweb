@@ -1,0 +1,22 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build-go",
+            "type": "shell",
+            "command": "go build -o ./bin/goweb",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "publish-go",
+            "type": "shell",
+            "command": "env GOOS=linux GOARCH=amd64 go build -o ./bin/publish/goweb",
+            "group": "build",
+            "problemMatcher": []
+        }
+    ]
+}
