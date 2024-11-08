@@ -48,14 +48,12 @@ func Redirects(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func checkAuthorizedPages(page string, r *http.Request) bool {
+func checkAuthorizedPages(page string, rawCookie string) bool {
 	authPages := AuthorizedPages
-	cookie, err := r.Cookie("X-Auth-Token")
-	rawCookie, _ := url.PathUnescape(cookie.Value)
+	log.Printf("DEBUG: checking cookie: %s", rawCookie)
 	for i := 0; i < len(authPages); i++ {
 		if authPages[i] == page &&
-			(err != nil ||
-				!controllers.CheckAuthToken(rawCookie)) {
+			!controllers.CheckAuthToken(rawCookie) {
 			return true
 		}
 	}
@@ -67,6 +65,7 @@ func LoadJSFile(w http.ResponseWriter, r *http.Request) {
 }
 func LoadPage(w http.ResponseWriter, r *http.Request) {
 	var data string
+	var rawCookie string
 	//TODO(#4): implement data injection to pages
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
@@ -78,6 +77,11 @@ func LoadPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	page := mux.Vars(r)["page"]
+	cookie, err := r.Cookie("X-Auth-Token")
+	if err == nil {
+		rawCookie, _ = url.PathUnescape(cookie.Value)
+	}
+
 	if !strings.ContainsAny(page, ".") {
 		page += ".html"
 	}
@@ -88,7 +92,7 @@ func LoadPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if checkAuthorizedPages(page, r) {
+	if checkAuthorizedPages(page, rawCookie) {
 		http.Error(w, "401 unauthorized", http.StatusUnauthorized)
 		log.Printf("%s UNAUTHORIZED: %s", r.RemoteAddr, r.RequestURI)
 		return

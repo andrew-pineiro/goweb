@@ -53,7 +53,7 @@ func retrieveUser(u string, p string) int {
 	for i, user := range UsersList.Users {
 		if u == user.Username && CheckPasswordHash(p, user.PasswordHash) {
 			UsersList.Users[i].LastLogon = time.Now()
-			if time.Now().Compare(UsersList.Users[i].AuthExpires.AddDate(0, 0, 90)) > 0 {
+			if time.Now().Compare(UsersList.Users[i].AuthExpires.AddDate(0, 0, 1)) > 0 {
 				UsersList.Users[i].AuthToken = GenerateToken(user)
 				UsersList.Users[i].AuthExpires = time.Now()
 			}
@@ -63,6 +63,9 @@ func retrieveUser(u string, p string) int {
 	return -1
 }
 func CheckAuthToken(token string) bool {
+	if token == "" {
+		return false
+	}
 	for _, user := range UsersList.Users {
 		if token == user.AuthToken {
 			return true
@@ -79,7 +82,19 @@ func validateLogin(u string, p string) User {
 	}
 	return User{Id: -1}
 }
+func validateRegister(u string, p string) {
+	//TODO: validate user during registration
+	user := User{
+		Username:     u,
+		PasswordHash: HashPassword(p),
+	}
+	UsersList.Users = append(UsersList.Users, user)
+}
 
 func Login(u string, p string) User {
 	return validateLogin(u, p)
+}
+func Register(u string, p string) string {
+	//TODO: do error checking
+	validateRegister(u, p)
 }
