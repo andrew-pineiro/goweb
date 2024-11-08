@@ -94,7 +94,7 @@ func validateRegister(u string, p string) {
 func Login(u string, p string) User {
 	return validateLogin(u, p)
 }
-func Register(u string, p string) string {
+func Register(u string, p string) {
 	//TODO: do error checking
 	validateRegister(u, p)
 }
