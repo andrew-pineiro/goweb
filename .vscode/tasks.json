@@ -14,7 +14,7 @@
         {
             "label": "publish-go",
             "type": "shell",
-            "command": "env GOOS=linux GOARCH=amd64 go build -o ./bin/publish/goweb",
+            "command": "go env -w GOOS=linux GOARCH=amd64 CGO_ENABLED=0; go build -o ./bin/publish/goweb",
             "group": "build",
             "problemMatcher": []
         }
