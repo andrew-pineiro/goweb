@@ -8,6 +8,7 @@
 1. This only currently works on Linux (and has only been tested on Debian)
 2. Docker must be installed.
 3. A `token.secret` file needs to exist in the root directory. This is to store the secret API token and is required for startup.
+4. Add your front-end code to the `www/` folder, otherwise nothing will load on your website.
 
 
 ## Setup
