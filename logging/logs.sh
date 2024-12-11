@@ -2,7 +2,9 @@
 DATE=$(date +%F)
 LOGPATH="/etc/website/logs"
 
-mv $LOGPATH/website.log "$LOGPATH/$DATE-website.log"
+if [ -f "$LOGPATH/website.log" ]; then
+    mv $LOGPATH/website.log "$LOGPATH/$DATE-website.log"
+fi
 
 find $LOGPATH -mindepth 1 -mtime +14 -delete
 
