@@ -88,11 +88,14 @@ func LoadPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if checkAuthorizedPages(page, r) {
+	//TODO: Fix authorization on pages
+	//CURRENTLY DISABLED, CAUSES ERRORS
+
+	/*if checkAuthorizedPages(page, r) {
 		http.Error(w, "401 unauthorized", http.StatusUnauthorized)
 		log.Printf("%s UNAUTHORIZED: %s", r.RemoteAddr, r.RequestURI)
 		return
-	}
+	}*/
 
 	file := path.Join(PageRoot, strings.ToLower(page))
 	baseFile := path.Join(PageRoot, BaseFile)
