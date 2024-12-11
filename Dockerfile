@@ -14,7 +14,7 @@ RUN go mod download
 COPY . ./
 
 # BUILD
-RUN CGO_ENABLED=0 GOOS=linux go build -o /goweb
+RUN CGO_ENABLED=0 GOOS=linux go build -o ./goweb
 
 # Optional:
 # To bind to a TCP port, runtime parameters must be supplied to the docker command.
@@ -24,4 +24,4 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o /goweb
 EXPOSE 8080
 
 # Run
-CMD ["/goweb"]
+CMD ["./goweb"]
