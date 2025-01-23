@@ -53,7 +53,7 @@ func retrieveUser(u string, p string) int {
 	for i, user := range UsersList.Users {
 		if u == user.Username && CheckPasswordHash(p, user.PasswordHash) {
 			UsersList.Users[i].LastLogon = time.Now()
-			if time.Now().Compare(UsersList.Users[i].AuthExpires.AddDate(0, 0, 90)) > 0 {
+			if time.Now().Compare(UsersList.Users[i].AuthExpires.AddDate(0, 0, 1)) > 0 {
 				UsersList.Users[i].AuthToken = GenerateToken(user)
 				UsersList.Users[i].AuthExpires = time.Now()
 			}
