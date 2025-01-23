@@ -67,6 +67,7 @@ func LoadJSFile(w http.ResponseWriter, r *http.Request) {
 }
 func LoadPage(w http.ResponseWriter, r *http.Request) {
 	var data string
+	var baseExists = true
 	//TODO(#4): implement data injection to pages
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
@@ -98,8 +99,11 @@ func LoadPage(w http.ResponseWriter, r *http.Request) {
 	}*/
 
 	file := path.Join(PageRoot, strings.ToLower(page))
-	baseFile := path.Join(PageRoot, BaseFile)
 
+	baseFile := path.Join(PageRoot, BaseFile)
+	if _, err := os.Stat(baseFile); err != nil {
+		baseExists = false
+	}
 	//check if file exists
 	if _, err := os.Stat(file); err != nil {
 		log.Printf("%s NOT FOUND: %s", r.RemoteAddr, file)
@@ -109,7 +113,7 @@ func LoadPage(w http.ResponseWriter, r *http.Request) {
 
 	log.Printf("%s LOAD: %s", r.RemoteAddr, file)
 
-	if strings.Contains(file, ".html") {
+	if strings.Contains(file, ".html") && baseExists {
 		tmpl, err := template.ParseFiles(file, baseFile)
 
 		if err != nil {
