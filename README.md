@@ -1,5 +1,7 @@
 # goweb
 
+[![GoBuild](https://github.com/andrew-pineiro/goweb/actions/workflows/go.yml/badge.svg)](https://github.com/andrew-pineiro/goweb/actions/workflows/go.yml)
+
 ## Summary
 
 **goweb** is a website engine written in [GoLang](https://golang.org/). Including HTML/JS rendering for websites and an API endpoint for other various tasks. Currently this is being actively used on [www.andrewpineiro.com](www.andrewpineiro.com).
