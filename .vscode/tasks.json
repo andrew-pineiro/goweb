@@ -4,7 +4,7 @@
         {
             "label": "build-go",
             "type": "shell",
-            "command": "go build -o ./bin/goweb",
+            "command": "go env -w GOOS=linux GOARCH=amd64 CGO_ENABLED=0; go build -o ./bin/debug/linux_amd64/goweb; go env -w GOOS=windows GOARCH=amd64 CGO_ENABLED=0; go build -o ./bin/debug/windows_amd64/goweb.exe",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -14,7 +14,7 @@
         {
             "label": "publish-go",
             "type": "shell",
-            "command": "go env -w GOOS=linux GOARCH=amd64 CGO_ENABLED=0; go build -o ./bin/publish/goweb",
+            "command": "go env -w GOOS=linux GOARCH=amd64 CGO_ENABLED=0; go build -o ./bin/publish/linux_amd64/goweb; go env -w GOOS=windows GOARCH=amd64 CGO_ENABLED=0; go build -o ./bin/publish/windows_amd64/goweb.exe",
             "group": "build",
             "problemMatcher": []
         }
