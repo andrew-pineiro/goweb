@@ -1,8 +1,9 @@
-package controllers
+package utils
 
 import (
 	"crypto/sha256"
 	"encoding/base64"
+	"goweb/models"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -15,8 +16,7 @@ func CheckPasswordHash(password, hash string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 	return err == nil
 }
-
-func GenerateToken(user User) string {
+func GenerateToken(user models.User) string {
 	hasher := sha256.New()
 	hasher.Write([]byte(user.Username))
 	hasher.Write([]byte(string(user.Id)))

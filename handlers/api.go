@@ -3,6 +3,8 @@ package handlers
 import (
 	"encoding/json"
 	"goweb/controllers"
+	"goweb/models"
+	"goweb/utils"
 	"log"
 	"net/http"
 	"os"
@@ -13,12 +15,16 @@ import (
 
 var Token string
 
-func SetToken() error {
-	tk, err := os.ReadFile("token.secret")
-	if err != nil {
-		return err
+func SetToken(token string) error {
+	if len(token) == 0 {
+		tk, err := os.ReadFile("token.secret")
+		if err != nil {
+			return err
+		}
+		Token = string(tk)
+	} else {
+		Token = token
 	}
-	Token = string(tk)
 	return nil
 }
 func checkToken(token string, w http.ResponseWriter, r *http.Request) bool {
@@ -33,12 +39,13 @@ func checkToken(token string, w http.ResponseWriter, r *http.Request) bool {
 	}
 }
 func APIHandler(w http.ResponseWriter, r *http.Request) {
+	//TODO: unhardcode API endpoints
 	token := r.Header.Get("token")
 	endpoint := mux.Vars(r)["endpoint"]
 
 	w.Header().Set("Content-Type", "application/json")
 
-	if !CheckRateCount(strings.Split(r.RemoteAddr, ":")[0]) {
+	if !utils.CheckRateCount(strings.Split(r.RemoteAddr, ":")[0]) {
 		log.Printf("%s RATE LIMIT EXCEEDED", r.RemoteAddr)
 		http.Error(w, "429 too many request", http.StatusTooManyRequests)
 		return
@@ -81,7 +88,7 @@ func APIHandler(w http.ResponseWriter, r *http.Request) {
 		case http.MethodGet:
 			break
 		case http.MethodPost:
-			var tempUser controllers.User
+			var tempUser models.User
 			err := json.NewDecoder(r.Body).Decode(&tempUser)
 			if err != nil {
 				log.Printf("ERROR: could not decode json; %s", err)
