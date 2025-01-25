@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"goweb/controllers"
+	"goweb/utils"
 	"html/template"
 	"log"
 	"net/http"
@@ -70,7 +71,7 @@ func LoadPage(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
-	if !CheckRateCount(strings.Split(r.RemoteAddr, ":")[0]) {
+	if !utils.CheckRateCount(strings.Split(r.RemoteAddr, ":")[0]) {
 		log.Printf("%s RATE LIMIT EXCEEDED", r.RemoteAddr)
 		http.Error(w, "429 too many request", http.StatusTooManyRequests)
 		return

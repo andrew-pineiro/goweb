@@ -43,7 +43,7 @@ func RecvMessage(msg Message, r *http.Request) error {
 	//TODO(#3): Implement storing in DB
 	var msgs []Message
 	var err error
-	log.Println(r.RemoteAddr, "RECIEVED:", msg)
+	log.Println(r.RemoteAddr, "RECEIVED:", msg)
 
 	msg.Sender = r.RemoteAddr
 	if !checkExists(DataDir) {

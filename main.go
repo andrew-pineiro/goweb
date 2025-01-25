@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"net/http"
 	"os"
@@ -11,49 +12,86 @@ import (
 	"github.com/gorilla/mux"
 )
 
-const (
-	Port = "8080"
+var (
+	AuthToken    string
+	ConfigureApi bool
+	Port         string
 )
 
-var AuthToken string
+func init() {
+	flag.BoolVar(&ConfigureApi, "Api", false, "Enables API routes")
+	flag.StringVar(&AuthToken, "AuthToken", "", "API auth token for secure acess")
+	flag.StringVar(&Port, "Port", "8080", "Port to run application on")
+	flag.Parse()
+}
 
 func main() {
-
-	err := handlers.SetToken()
-	if err != nil {
-		log.Printf("ERROR: unable to get token; %s", err)
-		os.Exit(1)
+	initializeApp()
+}
+func initializeApp() {
+	// Set API Token
+	if ConfigureApi {
+		log.Println("STARTUP: Setting API token")
+		err := handlers.SetToken(AuthToken)
+		if err != nil {
+			log.Printf("ERROR: Unable to set API token; Supply with --AuthToken or create token.secret file in root directory;")
+			log.Printf("ERROR: %s", err)
+			os.Exit(1)
+		}
 	}
-	router := mux.NewRouter()
+	// Setup Router
+	router := setupRouter()
 
+	// Load Users
+	log.Printf("STARTUP: Loading users from file")
 	controllers.LoadUsers()
 
-	//Static Files
+	startServer(router)
+}
+func startServer(router *mux.Router) {
+	server := &http.Server{
+		Addr:    ":" + Port,
+		Handler: router,
+	}
+
+	log.Printf("STARTUP: LISTENING ON PORT %s; API TOKEN: %s", Port, handlers.Token)
+	err := server.ListenAndServe()
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+func setupRouter() *mux.Router {
+	log.Printf("STARTUP: Setting up router")
+	router := mux.NewRouter()
+
+	//Static + JS Files
+	log.Println("STARTUP: Configuring static file handler")
 	router.PathPrefix("/static").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./www/static"))))
-	//JS Files
 	router.HandleFunc("/js/{file}", handlers.LoadJSFile)
+
 	//Redirects
+	log.Println("STARTUP: Configuring redirect handler")
 	router.HandleFunc("/favicon.ico", handlers.Redirects)
 	router.HandleFunc("/", handlers.Redirects)
+
 	//API Endpoints
-	router.HandleFunc("/api/{endpoint}", handlers.APIHandler)
+	if ConfigureApi {
+		log.Println("STARTUP: Configuring API endpoint handler")
+		router.HandleFunc("/api/{endpoint}", handlers.APIHandler)
+	}
+
 	//HTML Pages
+	log.Println("STARTUP: Configuring web page handler")
 	router.HandleFunc("/{page}", handlers.LoadPage).Methods("GET")
+
 	//NOT FOUND
+	log.Println("STARTUP: Configuring 404 handler")
 	router.NotFoundHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		log.Printf("%s NOT FOUND: %s", r.RemoteAddr, r.RequestURI)
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte("404 page not found"))
 	})
 
-	server := &http.Server{
-		Addr:    ":" + Port,
-		Handler: router,
-	}
-
-	log.Printf("START: PORT %s; TOKEN: %s", Port, handlers.Token)
-	err = server.ListenAndServe()
-	if err != nil {
-		log.Fatal(err)
-	}
+	log.Println("STARTUP: Router configured!")
+	return router
 }
