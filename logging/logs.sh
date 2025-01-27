@@ -1,6 +1,6 @@
 #!/bin/bash
 DATE=$(date +%F)
-LOGPATH="/etc/website/logs"
+LOGPATH="/opt/goweb/logs"
 
 if [ -f "$LOGPATH/website.log" ]; then
     mv $LOGPATH/website.log "$LOGPATH/$DATE-website.log"
