@@ -1,9 +1,10 @@
 [Unit]
-Description=weblogs service
+Description=goweb logging service
 After=network-online.target
 
 [Service]
-ExecStart=/bin/bash /etc/website/logs.sh
+User=goweb
+ExecStart=/bin/bash /opt/goweb/www/logging/logs.sh
 
 [Install]
 WantedBy=multi-user.target

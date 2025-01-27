@@ -10,22 +10,31 @@ SVCNAME="weblogs.service"
 DOCKNAME="goweb_1"
 IMGNAME="goweb"
 
+
+if [ ! id "goweb" >/dev/null 2>&1]; then
+    useradd -d $GOWEBPATH goweb -s /bin/bash
+fi
+
+if [ ! -d  $GOWEBPATH]; then
+  mkdir $GOWEBPATH
+  chown $GOWEBPATH goweb:goweb
+fi
+
 if [ -d $APPDIR ]; then
     rm $APPDIR -r
 fi
 
 mkdir $APPDIR
-cp ./ $APPDIR -r
+chown $APPDIR goweb:goweb
 
-if [ ! -d $WEBPATH ]; then
-   mkdir $WEBPATH
-   cp $LOGSHPATH $WEBPATH
-fi
+cp ./ $APPDIR -r
+chown -R $APPDIR/* goweb:goweb
+chmod +x $LOGSHPATH
 
 if [ ! -d $LOGPATH ]; then
     mkdir $LOGPATH
+    chown $LOGPATH goweb:goweb
 fi
-
 
 docker build --tag $IMGNAME $APPDIR
 
