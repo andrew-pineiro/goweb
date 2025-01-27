@@ -1,14 +1,14 @@
 #!/bin/bash
 set -x
 
-APPDIR="/www"
+GOWEBPATH="/opt/goweb"
+APPDIR="$GOWEBPATH/www"
+LOGPATH="$GOWEBPATH/logs"
+LOGSHPATH="$GOWEBPATH/www/logging/logs.sh"
+SVCPATH="$GOWEBPATH/www/logging/weblogs.service"
+SVCNAME="weblogs.service"
 DOCKNAME="goweb_1"
 IMGNAME="goweb"
-SVCNAME="weblogs.service"
-SVCPATH="./logging/weblogs.service"
-WEBPATH="/etc/website/"
-LOGPATH="/etc/website/logs/"
-LOGSHPATH="/www/logging/logs.sh"
 
 if [ -d $APPDIR ]; then
     rm $APPDIR -r
