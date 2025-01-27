@@ -17,7 +17,7 @@ fi
 
 if [ ! -d  $GOWEBPATH]; then
   mkdir $GOWEBPATH
-  chown $GOWEBPATH goweb:goweb
+  chown goweb:goweb $GOWEBPATH 
 fi
 
 if [ -d $APPDIR ]; then
@@ -25,18 +25,18 @@ if [ -d $APPDIR ]; then
 fi
 
 mkdir $APPDIR
-chown $APPDIR goweb:goweb
+chown goweb:goweb $APPDIR 
 
 cp ./ $APPDIR -r
-chown -R $APPDIR/* goweb:goweb
+chown goweb:goweb -R $APPDIR/* 
 chmod +x $LOGSHPATH
 
 if [ ! -d $LOGPATH ]; then
     mkdir $LOGPATH
-    chown $LOGPATH goweb:goweb
+    chown goweb:goweb $LOGPATH 
 fi
 
-docker build --tag $IMGNAME $APPDIR
+docker build --tag $IMGNAME $APPDIR/docker
 
 if [ $( docker ps -a -f name=$DOCKNAME| wc -l ) -eq 2 ]; then  
   docker rm -f $DOCKNAME

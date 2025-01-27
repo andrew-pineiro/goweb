@@ -54,7 +54,7 @@ func startServer(router *mux.Router) {
 		Handler: router,
 	}
 
-	log.Printf("STARTUP: LISTENING ON PORT %s; API TOKEN: %s", Port, handlers.Token)
+	log.Printf("STARTUP COMPLETE: LISTENING ON PORT %s", Port)
 	err := server.ListenAndServe()
 	if err != nil {
 		log.Fatal(err)

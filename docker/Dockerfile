@@ -6,10 +6,10 @@ FROM golang:1.22
 WORKDIR /www
 
 # Download Go modules
-COPY go.mod go.sum ./
+COPY ../go.mod ../go.sum ./
 RUN go mod download
 
-COPY . ./
+COPY .. ./
 
 # BUILD
 RUN CGO_ENABLED=0 GOOS=linux go build -o ./goweb
