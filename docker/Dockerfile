@@ -1,21 +1,36 @@
-# syntax=docker/dockerfile:1
+# Build Stage
+FROM golang:1.19-alpine AS builder
 
-FROM golang:1.22
+# Set up working directory
+WORKDIR /app
 
-# Set destination for COPY
-WORKDIR /www
+# Install necessary dependencies
+RUN apk add --no-cache git
 
-# Download Go modules 
-COPY ./src/go.mod ./src/go.sum ./
+# Copy go mod and sum files separately to leverage caching
+COPY go.mod go.sum ./
 RUN go mod download
 
-COPY .. ./
+# Copy the entire source code
+COPY . .
 
-# BUILD
-RUN CGO_ENABLED=0 GOOS=linux go build ./src/main.go -o goweb
+# Build the Go application
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o goweb
 
-# THIS SHOULD MATCH --Port argument
+# Final Stage (Minimal Image)
+FROM scratch
+
+# Set working directory
+WORKDIR /root/
+
+# Copy the built application from the builder stage
+COPY --from=builder /app/goweb .
+
+# Add a non-root user for security
+USER 1001
+
+# Expose port 8080
 EXPOSE 8080
 
-# Run
-CMD ["./goweb"]
+# Define the entrypoint
+ENTRYPOINT ["./goweb"]
