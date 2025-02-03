@@ -6,13 +6,13 @@ FROM golang:1.22
 WORKDIR /www
 
 # Download Go modules 
-COPY ../src/go.mod ../src/go.sum ./
+COPY ./src/go.mod ./src/go.sum ./
 RUN go mod download
 
 COPY .. ./
 
 # BUILD
-RUN CGO_ENABLED=0 GOOS=linux go build ../src/main.go -o ../goweb
+RUN CGO_ENABLED=0 GOOS=linux go build -o ../goweb
 
 # THIS SHOULD MATCH --Port argument
 EXPOSE 8080
