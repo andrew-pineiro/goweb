@@ -38,7 +38,8 @@ mkdir -p "$APPDIR"
 chown goweb:goweb "$APPDIR"
 
 # Copy application files
-cp -r ../* "$APPDIR/"
+#TODO: look to improve this, if the docker script is ran from docker/ it will fail
+cp -r ./* "$APPDIR/"
 cp "$APPDIR/docker/Dockerfile" "$APPDIR"
 chown -R goweb:goweb $APPDIR/*
 chmod +x "$LOGSHPATH"
