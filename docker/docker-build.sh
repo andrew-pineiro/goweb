@@ -45,7 +45,7 @@ chown -R goweb:goweb $APPDIR/*
 chmod +x "$LOGSHPATH"
 
 # Build Docker image
-docker build --tag "$IMGNAME" "$APPDIR/docker"
+docker build --tag "$IMGNAME" "$APPDIR"
 
 # Remove existing container if it exists
 if docker ps -a -f name="$DOCKNAME" --format '{{.Names}}' | grep -q "$DOCKNAME"; then

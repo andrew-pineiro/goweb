@@ -12,7 +12,7 @@ RUN go mod download
 COPY .. ./
 
 # BUILD
-RUN CGO_ENABLED=0 GOOS=linux go build -o ../goweb
+RUN CGO_ENABLED=0 GOOS=linux go build ./src/main.go -o goweb
 
 # THIS SHOULD MATCH --Port argument
 EXPOSE 8080
