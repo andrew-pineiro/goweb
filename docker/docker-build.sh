@@ -40,7 +40,7 @@ chown goweb:goweb "$APPDIR"
 # Copy application files
 cp -r ../ "$APPDIR/"
 cp "$APPDIR/docker/Dockerfile" "$APPDIR"
-chown -R goweb:goweb "$APPDIR/*"
+chown -R goweb:goweb $APPDIR/*
 chmod +x "$LOGSHPATH"
 
 # Build Docker image
