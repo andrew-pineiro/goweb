@@ -1,18 +1,22 @@
 #!/bin/sh
 set -e  # Exit on error
 
-# Set Go environment variables
-export GOOS=linux
-export GOARCH=amd64
-export CGO_ENABLED=0
-export GO111MODULE=on
+IMAGE_NAME="andrew-pineiro/goweb:latest"
+CONTAINER_NAME="goweb-builder"
 
-# Build the Go application
-echo "Building Go application..."
-go build -ldflags="-w -s" -o goweb
+echo "Building Go application inside Docker..."
 
-# Build the Docker image
+# Step 1: Use a temporary container to build the Go application
+docker run --rm \
+    -v "$(pwd)":/app \
+    -w /app \
+    golang:1.19-alpine \
+    sh -c "apk add --no-cache git && go mod download && go build -ldflags='-w -s' -o goweb"
+
+echo "Go application built successfully!"
+
+# Step 2: Build the final Docker image
 echo "Building Docker image..."
-docker build -t andrew-pineiro/goweb:latest .
+docker build -t $IMAGE_NAME .
 
 echo "Docker build complete!"
