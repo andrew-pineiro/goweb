@@ -54,7 +54,11 @@ func configureBuildDir() string {
 			log.Fatalf("ERROR: unable to make build directory %s: %s", outputDir, err)
 		}
 	}
-	return outputDir
+	outputFile := ProjectName
+	if OperatingSystem == "windows" {
+		outputFile += ".exe"
+	}
+	return fmt.Sprintf("%s/%s", outputDir, outputFile)
 }
 func setBuildEnv() {
 	cmd := exec.Command("go", "env", "-w", fmt.Sprintf("GOOS=%s", OperatingSystem), fmt.Sprintf("GOARCH=%s", Architecture), "CGO_ENABLED=0")
@@ -66,12 +70,11 @@ func main() {
 		getProjectName()
 	}
 	outputDir := configureBuildDir()
-
 	log.Println("Setting up build environment...")
 	setBuildEnv()
 
 	log.Println("Building project...")
-	cmd := exec.Command("go", "build", "-o", fmt.Sprintf("%s/%s", outputDir, ProjectName))
+	cmd := exec.Command("go", "build", "-o", outputDir)
 	cmd.Dir = ProjectDirectory
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin

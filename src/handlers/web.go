@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"bufio"
 	"goweb/controllers"
 	"goweb/utils"
 	"html/template"
@@ -19,20 +20,18 @@ const (
 	BaseFile = "base.html"
 )
 
-// Running list of restricted pages that should return a 403 forbidden
-var RestrictedPages []string = []string{
-	"base.html",
-}
-
 // TODO(#7): hard code pages that require auth into the page itself rather than an array
-var AuthorizedPages []string = []string{
-	"admin-panel.html",
-}
 
-func checkRestrictedPages(page string) bool {
-	restPages := RestrictedPages
-	for i := 0; i < len(restPages); i++ {
-		if restPages[i] == page {
+func checkRestrictedPages(file string) bool {
+	fileHandle, err := os.Open(file)
+	if err != nil {
+		log.Printf("WARNING: could not check file for authentication - %s", err)
+		return false
+	}
+	defer fileHandle.Close()
+	scanner := bufio.NewScanner(fileHandle)
+	for scanner.Scan() {
+		if strings.Contains(scanner.Text(), `<meta name="restricted" content="true">`) {
 			return true
 		}
 	}
@@ -44,15 +43,19 @@ func Redirects(w http.ResponseWriter, r *http.Request) {
 	switch r.RequestURI {
 	case "/favicon.ico":
 		http.Redirect(w, r, "/static/images/favicon.ico", http.StatusMovedPermanently)
-	case "/":
-		http.Redirect(w, r, "index.html", http.StatusMovedPermanently)
 	}
 }
 
-func checkAuthorizedPages(page string, rawCookie string) bool {
-	authPages := AuthorizedPages
-	for i := 0; i < len(authPages); i++ {
-		if authPages[i] == page &&
+func checkAuthorizedPages(file string, rawCookie string) bool {
+	fileHandle, err := os.Open(file)
+	if err != nil {
+		log.Printf("WARNING: could not check file for authentication - %s", err)
+		return false
+	}
+	defer fileHandle.Close()
+	scanner := bufio.NewScanner(fileHandle)
+	for scanner.Scan() {
+		if strings.Contains(scanner.Text(), `<meta name="auth-required" content="true">`) &&
 			!controllers.CheckAuthToken(rawCookie) {
 			return true
 		}
@@ -78,6 +81,9 @@ func LoadPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	page := mux.Vars(r)["page"]
+	if page == "" {
+		page = "index.html"
+	}
 	cookie, err := r.Cookie("X-Auth-Token")
 	if err == nil {
 		rawCookie, _ = url.PathUnescape(cookie.Value)
@@ -87,19 +93,19 @@ func LoadPage(w http.ResponseWriter, r *http.Request) {
 		page += ".html"
 	}
 
-	if checkRestrictedPages(page) {
+	file := path.Join(PageRoot, strings.ToLower(page))
+
+	if checkRestrictedPages(file) {
 		http.Error(w, "403 forbidden", http.StatusForbidden)
 		log.Printf("%s RESTRICTED: %s", r.RemoteAddr, r.RequestURI)
 		return
 	}
-
-	if checkAuthorizedPages(page, rawCookie) {
+	if checkAuthorizedPages(file, rawCookie) {
+		//TODO: handle this better like redirect to a login page
 		http.Error(w, "401 unauthorized", http.StatusUnauthorized)
 		log.Printf("%s UNAUTHORIZED: %s", r.RemoteAddr, r.RequestURI)
 		return
 	}
-
-	file := path.Join(PageRoot, strings.ToLower(page))
 
 	baseFile := path.Join(PageRoot, BaseFile)
 	if _, err := os.Stat(baseFile); err != nil {

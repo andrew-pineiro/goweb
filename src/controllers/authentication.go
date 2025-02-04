@@ -17,7 +17,7 @@ var UsersList models.Users
 func LoadUsers() {
 	bytes, err := os.ReadFile(PW_FILE)
 	if err != nil {
-		log.Printf("WARN: Could not load users - %s\n", err)
+		log.Printf("WARNING: Could not load users - %s\n", err)
 		return
 	}
 	if err := json.Unmarshal(bytes, &UsersList); err != nil {
