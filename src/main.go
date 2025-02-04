@@ -72,7 +72,6 @@ func setupRouter() *mux.Router {
 	//Redirects
 	log.Println("STARTUP: Configuring redirect handler")
 	router.HandleFunc("/favicon.ico", handlers.Redirects)
-	router.HandleFunc("/", handlers.Redirects)
 
 	//API Endpoints
 	if ConfigureApi {
@@ -85,7 +84,7 @@ func setupRouter() *mux.Router {
 	router.HandleFunc("/{page}", handlers.LoadPage).Methods("GET")
 
 	//NOT FOUND
-	log.Println("STARTUP: Configuring 404 handler")
+	log.Println("STARTUP: Configuring 404 handler.")
 	router.NotFoundHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		log.Printf("%s NOT FOUND: %s", r.RemoteAddr, r.RequestURI)
 		w.WriteHeader(http.StatusNotFound)
