@@ -1,66 +1,44 @@
 #!/bin/bash
 set -e  # Exit on error
-set -x  # Debugging output
 
-# Define variables
-GOWEBPATH="/opt/goweb"
-APPDIR="$GOWEBPATH/www"
-LOGPATH="$GOWEBPATH/logs"
-LOGSHPATH="$APPDIR/logging/logs.sh"
-SVCPATH="$APPDIR/logging/weblogs.service"
-SVCNAME="weblogs.service"
-DOCKNAME="goweb_1"
-IMGNAME="goweb"
+# Get root directory of project
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
-# Function to create a directory if it doesn't exist
-create_dir() {
-    local dir="$1"
-    if [ ! -d "$dir" ]; then
-        mkdir -p "$dir"
-        chown goweb:goweb "$dir"
-    fi
-}
+# Docker variables
+IMAGE_NAME="andrew-pineiro/goweb:latest"
+DOCKER_NAME="goweb_1"
 
-# Ensure the 'goweb' user exists
-if ! id "goweb" &>/dev/null; then
-    useradd -m -d "$GOWEBPATH" -s /bin/bash goweb
-fi
+# Logging Services
+SVC_NAME="weblogs.service"
+SVC_FILEPATH="$PROJECT_ROOT/logging"
 
-# Create required directories
-create_dir "$GOWEBPATH"
-create_dir "$LOGPATH"
+# Move Dockerfile to src/ for compiling
+cp $SCRIPT_DIR/Dockerfile $PROJECT_ROOT/src
+pushd $PROJECT_ROOT/src
 
-# Set up application directory
-if [ -d "$APPDIR" ]; then
-    rm -rf "$APPDIR"
-fi
-mkdir -p "$APPDIR"
-chown goweb:goweb "$APPDIR"
+echo "Building Docker image..."
+docker build -t $IMAGE_NAME .
+echo "Docker build complete!"
 
-# Copy application files
-cp -r ../ "$APPDIR/"
-cp "$APPDIR/docker/Dockerfile" "$APPDIR"
-chown -R goweb:goweb "$APPDIR/*"
-chmod +x "$LOGSHPATH"
-
-# Build Docker image
-docker build --tag "$IMGNAME" "$APPDIR/docker"
+rm Dockerfile
+popd
 
 # Remove existing container if it exists
-if docker ps -a -f name="$DOCKNAME" --format '{{.Names}}' | grep -q "$DOCKNAME"; then
-    docker rm -f "$DOCKNAME"
+if docker ps -a -f name="$DOCKER_NAME" --format '{{.Names}}' | grep -q "$DOCKER_NAME"; then
+    docker rm -f "$DOCKER_NAME"
 fi
 
 # Run Docker container
-docker run -d --name "$DOCKNAME" -p 80:8080 "$IMGNAME:latest"
+docker run -d --name "$DOCKER_NAME" -p 80:8080 "$IMAGE_NAME"
 
 # Manage systemd service
-if ! systemctl is-active --quiet "$SVCNAME"; then
-    if [ ! -f "/etc/systemd/system/$SVCNAME" ]; then
-        cp "$SVCPATH" /etc/systemd/system/
-        systemctl enable "$SVCNAME"
+if ! systemctl is-active --quiet "$SVC_NAME"; then
+    if [ ! -f "/etc/systemd/system/$SVC_NAME" ]; then
+        cp "$SVC_FILEPATH" /etc/systemd/system/
+        systemctl enable "$SVC_NAME"
     fi
-    systemctl start "$SVCNAME"
+    systemctl start "$SVC_NAME"
 else
-    systemctl restart "$SVCNAME"
+    systemctl restart "$SVC_NAME"
 fi
