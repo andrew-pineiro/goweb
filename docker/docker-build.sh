@@ -10,7 +10,7 @@ DOCKER_NAME="goweb_1"
 SVC_NAME="weblogs.service"
 SVC_FILEPATH="$PROJECT_ROOT/logging"
 
-cp Dockerfile $PROJECT_ROOT/src
+cp $SCRIPT_DIR/Dockerfile $PROJECT_ROOT/src
 pushd $PROJECT_ROOT/src
 
 echo "Building Docker image..."
