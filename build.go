@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 )
 
 var (
@@ -24,7 +25,7 @@ func init() {
 	flag.StringVar(&ProjectName, "name", "main", "Name of the project")
 	flag.StringVar(&ProjectDirectory, "D", ".", "Directory with main function for build")
 	flag.StringVar(&OutputDirectory, "O", "./bin", "Directory to output  build files")
-	flag.StringVar(&Configuration, "C", "Debug", "Configuration to build the project under (Debug/Release)")
+	flag.StringVar(&Configuration, "C", "debug", "Configuration to build the project under (Debug/Release)")
 	flag.StringVar(&Architecture, "A", "amd64", "Architecture to build application under")
 	flag.StringVar(&OperatingSystem, "OS", "linux", "Operating systme to build application under")
 	flag.BoolVar(&Publish, "P", false, "Enable publish mode in build")
@@ -42,7 +43,7 @@ func getProjectName() {
 	ProjectName = name
 }
 func configureBuildDir() string {
-	outputDir := filepath.Join(OutputDirectory, Configuration, OperatingSystem, Architecture)
+	outputDir := filepath.Join(OutputDirectory, strings.ToLower(Configuration), strings.ToLower(OperatingSystem), strings.ToLower(Architecture))
 	_, dirErr := os.ReadDir(outputDir)
 	if dirErr != nil {
 		err := os.MkdirAll(outputDir, 0755)
