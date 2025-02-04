@@ -1,15 +1,19 @@
 #!/bin/bash
 set -e  # Exit on error
 
+# Get root directory of project
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
+# Docker variables
 IMAGE_NAME="andrew-pineiro/goweb:latest"
 DOCKER_NAME="goweb_1"
 
+# Logging Services
 SVC_NAME="weblogs.service"
 SVC_FILEPATH="$PROJECT_ROOT/logging"
 
+# Move Dockerfile to src/ for compiling
 cp $SCRIPT_DIR/Dockerfile $PROJECT_ROOT/src
 pushd $PROJECT_ROOT/src
 

@@ -23,19 +23,18 @@ var (
 
 func init() {
 	flag.StringVar(&ProjectName, "name", "main", "Name of the project")
-	flag.StringVar(&ProjectDirectory, "D", ".", "Directory with main function for build")
-	flag.StringVar(&OutputDirectory, "O", "./bin", "Directory to output  build files")
-	flag.StringVar(&Configuration, "C", "debug", "Configuration to build the project under (Debug/Release)")
-	flag.StringVar(&Architecture, "A", "amd64", "Architecture to build application under")
-	flag.StringVar(&OperatingSystem, "OS", "linux", "Operating systme to build application under")
-	flag.BoolVar(&Publish, "P", false, "Enable publish mode in build")
+	flag.StringVar(&ProjectDirectory, "dir", ".", "Directory with main function for build")
+	flag.StringVar(&OutputDirectory, "output", "./bin", "Directory to output  build files")
+	flag.StringVar(&Configuration, "config", "debug", "Configuration to build the project under (Debug/Release)")
+	flag.StringVar(&Architecture, "arch", "amd64", "Architecture to build application under")
+	flag.StringVar(&OperatingSystem, "os", "linux", "Operating systme to build application under")
+	flag.BoolVar(&Publish, "publish", false, "Enable publish mode in build")
 	flag.Parse()
 }
 func getProjectName() {
 	dir, err := os.Getwd()
 	if err != nil {
 		log.Printf("ERROR: could read directory %s", err)
-		//		return ""
 	}
 
 	name := filepath.Base(dir)
@@ -43,7 +42,11 @@ func getProjectName() {
 	ProjectName = name
 }
 func configureBuildDir() string {
-	outputDir := filepath.Join(OutputDirectory, strings.ToLower(Configuration), strings.ToLower(OperatingSystem), strings.ToLower(Architecture))
+	config := Configuration
+	if Publish {
+		config = "publish"
+	}
+	outputDir := filepath.Join(OutputDirectory, strings.ToLower(config), fmt.Sprintf("%s_%s", strings.ToLower(OperatingSystem), strings.ToLower(Architecture)))
 	_, dirErr := os.ReadDir(outputDir)
 	if dirErr != nil {
 		err := os.MkdirAll(outputDir, 0755)
