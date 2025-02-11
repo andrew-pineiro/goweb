@@ -12,7 +12,7 @@ GOARCH ?= $(shell go env GOARCH)
 # Single build with specified GOOS/GOARCH
 build:
 	mkdir -p $(BUILD_DIR)
-	GOOS=$(GOOS) GOARCH=$(GOARCH) go build -o $(BUILD_DIR)/$(BINARY_NAME)-$(GOOS)-$(GOARCH)
+	GOOS=$(GOOS) GOARCH=$(GOARCH) go build -C $(SRC_DIR) -o ../$(BUILD_DIR)/$(BINARY_NAME)-$(GOOS)-$(GOARCH)
 
 # Build for multiple platforms
 build-all: clean
