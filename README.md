@@ -11,25 +11,6 @@
 2. If you specify `-Api`, a `token.secret` file needs to exist in the root directory or supplied with `-AuthToken`. This is to store the secret API token and is required for startup.
 3. Add your front-end code to the `www/` folder, otherwise nothing will load on your website.
 
-## Build
-**goweb** comes with a native build file, `build.go` in the root of the project. To start building **goweb**, type `go build build.go` in the root of the project. Run the build executable created, it supports the following flags:
-```
-  -arch string
-        Architecture to build application under (default "amd64")
-  -config string
-        Configuration to build the project under (Debug/Release) (default "debug")
-  -dir string
-        Directory with main function for build (default ".")
-  -name string
-        Name of the project (default "main")
-  -os string
-        Operating systme to build application under (default "linux")
-  -output string
-        Directory to output  build files (default "./bin")
-  -publish
-        Enable publish mode in build
-```
-
 ## Docker Setup
 
 Ideally, the only setup needed is running the `docker-build.sh` script with root permissions. If this is not the case, please create an [issue](https://github.com/andrew-pineiro/goweb/issues).

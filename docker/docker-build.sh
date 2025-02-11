@@ -21,6 +21,7 @@ echo "Building Docker image..."
 docker build -t $IMAGE_NAME .
 echo "Docker build complete!"
 
+# Cleanup Dockerfile and pop out of the src/ directory
 rm Dockerfile
 popd
 
