@@ -5,8 +5,6 @@ www/content/*
 www/js/*
 www/static/*
 www/*.*
-build
-build.exe
 
 !www/content/.gitkeep
 !www/js/.gitkeep
