@@ -20,8 +20,6 @@ const (
 	BaseFile = "base.html"
 )
 
-// TODO(#7): hard code pages that require auth into the page itself rather than an array
-
 func checkRestrictedPages(file string) bool {
 	fileHandle, err := os.Open(file)
 	if err != nil {
