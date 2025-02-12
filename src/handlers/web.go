@@ -43,6 +43,8 @@ func Redirects(w http.ResponseWriter, r *http.Request) {
 	switch r.RequestURI {
 	case "/favicon.ico":
 		http.Redirect(w, r, "/static/images/favicon.ico", http.StatusMovedPermanently)
+	case "/":
+		http.Redirect(w, r, "/index.html", http.StatusMovedPermanently)
 	}
 }
 
@@ -81,9 +83,6 @@ func LoadPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	page := mux.Vars(r)["page"]
-	if page == "" {
-		page = "index.html"
-	}
 	cookie, err := r.Cookie("X-Auth-Token")
 	if err == nil {
 		rawCookie, _ = url.PathUnescape(cookie.Value)
