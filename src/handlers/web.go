@@ -20,8 +20,6 @@ const (
 	BaseFile = "base.html"
 )
 
-// TODO(#7): hard code pages that require auth into the page itself rather than an array
-
 func checkRestrictedPages(file string) bool {
 	fileHandle, err := os.Open(file)
 	if err != nil {
@@ -43,6 +41,8 @@ func Redirects(w http.ResponseWriter, r *http.Request) {
 	switch r.RequestURI {
 	case "/favicon.ico":
 		http.Redirect(w, r, "/static/images/favicon.ico", http.StatusMovedPermanently)
+	case "/":
+		http.Redirect(w, r, "/index.html", http.StatusMovedPermanently)
 	}
 }
 
@@ -81,9 +81,6 @@ func LoadPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	page := mux.Vars(r)["page"]
-	if page == "" {
-		page = "index.html"
-	}
 	cookie, err := r.Cookie("X-Auth-Token")
 	if err == nil {
 		rawCookie, _ = url.PathUnescape(cookie.Value)
@@ -94,6 +91,12 @@ func LoadPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	file := path.Join(PageRoot, strings.ToLower(page))
+	//check if file exists
+	if _, err := os.Stat(file); err != nil {
+		log.Printf("%s NOT FOUND: %s", r.RemoteAddr, file)
+		http.Error(w, "404 page not found", http.StatusNotFound)
+		return
+	}
 
 	if checkRestrictedPages(file) {
 		http.Error(w, "403 forbidden", http.StatusForbidden)
@@ -110,12 +113,6 @@ func LoadPage(w http.ResponseWriter, r *http.Request) {
 	baseFile := path.Join(PageRoot, BaseFile)
 	if _, err := os.Stat(baseFile); err != nil {
 		baseExists = false
-	}
-	//check if file exists
-	if _, err := os.Stat(file); err != nil {
-		log.Printf("%s NOT FOUND: %s", r.RemoteAddr, file)
-		http.Error(w, "404 page not found", http.StatusNotFound)
-		return
 	}
 
 	log.Printf("%s LOAD: %s", r.RemoteAddr, file)

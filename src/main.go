@@ -72,6 +72,7 @@ func setupRouter() *mux.Router {
 	//Redirects
 	log.Println("STARTUP: Configuring redirect handler")
 	router.HandleFunc("/favicon.ico", handlers.Redirects)
+	router.HandleFunc("/", handlers.Redirects)
 
 	//API Endpoints
 	if ConfigureApi {
