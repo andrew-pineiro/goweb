@@ -91,6 +91,12 @@ func LoadPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	file := path.Join(PageRoot, strings.ToLower(page))
+	//check if file exists
+	if _, err := os.Stat(file); err != nil {
+		log.Printf("%s NOT FOUND: %s", r.RemoteAddr, file)
+		http.Error(w, "404 page not found", http.StatusNotFound)
+		return
+	}
 
 	if checkRestrictedPages(file) {
 		http.Error(w, "403 forbidden", http.StatusForbidden)
@@ -107,12 +113,6 @@ func LoadPage(w http.ResponseWriter, r *http.Request) {
 	baseFile := path.Join(PageRoot, BaseFile)
 	if _, err := os.Stat(baseFile); err != nil {
 		baseExists = false
-	}
-	//check if file exists
-	if _, err := os.Stat(file); err != nil {
-		log.Printf("%s NOT FOUND: %s", r.RemoteAddr, file)
-		http.Error(w, "404 page not found", http.StatusNotFound)
-		return
 	}
 
 	log.Printf("%s LOAD: %s", r.RemoteAddr, file)
