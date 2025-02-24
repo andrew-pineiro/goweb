@@ -3,34 +3,50 @@ package utils
 import (
 	"database/sql"
 	"fmt"
+	"goweb/models"
 	"log"
+	"time"
 
 	_ "github.com/mattn/go-sqlite3"
 )
 
-func GetDBRows() {
-	db, err := sql.Open("sqlite3", "./data/goweb.db")
+const DB_FILE = "./data/goweb.db"
+
+func CheckUserByName(username string) models.User {
+	var user models.User
+	db, err := sql.Open("sqlite3", DB_FILE)
 	if err != nil {
-		log.Fatalf("ERROR: Could not open database %s", err)
+		log.Printf("ERROR: Could not open database %s", err)
+		return user
 	}
 	defer db.Close()
 
-	rows, err := db.Query("SELECT * FROM Users")
+	rows, err := db.Query(fmt.Sprintf("SELECT * FROM Users WHERE username = '%s'", username))
 	if err != nil {
 		log.Printf("ERROR: Could not query db  %s", err)
-		return
+		return user
 	}
 	for rows.Next() {
-		var id int
-		var guid string
-		var username string
-		var email string
-
-		err = rows.Scan(&id, &guid, &username, &email)
+		err = rows.Scan(&user.Id, &user.Guid, &user.Username, &user.Email, &user.Password, &user.LastLoginDate, &user.LastChangeDate)
 		if err != nil {
+			log.Printf("ERROR: could not scan row %s", err)
 			continue
 		}
-		fmt.Printf("Found user: %s", username)
 	}
+	return user
+}
+func UpdateLastLogin(guid string) {
+	db, err := sql.Open("sqlite3", DB_FILE)
+	if err != nil {
+		log.Printf("ERROR: Could not open database %s", err)
+		return
+	}
+	defer db.Close()
 
+	query, _ := db.Prepare("UPDATE Users set last_login_date=? where guid=?")
+
+	_, err = query.Exec(time.Now().String(), guid)
+	if err != nil {
+		log.Printf("ERROR: unable to update record %s", err)
+	}
 }

@@ -3,19 +3,18 @@ package handlers
 import (
 	"encoding/json"
 	"goweb/middleware"
+	"goweb/models"
+	"goweb/utils"
 	"net/http"
 )
 
-// User represents a simple user model
-type User struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-}
+func ValidateLogin(username string, password string) bool {
+	user := utils.CheckUserByName(username)
+	if user.Guid != "" && utils.CheckPasswordHash(password, user.Password) {
+		return true
+	}
+	return false
 
-// TODO: Unhardcode this into a db.
-var users = map[string]string{
-	"admin": "password123",
-	"user1": "mypassword",
 }
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
@@ -25,7 +24,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Parse JSON request
-	var user User
+	var user models.User
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
 		http.Error(w, "Invalid request", http.StatusBadRequest)
@@ -33,15 +32,15 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Authenticate user
-	if password, ok := users[user.Username]; ok && password == user.Password {
+	if ValidateLogin(user.Username, user.Password) {
 		// Set session if authentication is successful
-		middleware.SetSession(w, user.Username)
+		middleware.SetSession(w, user)
 
 		redirect := r.URL.Query().Get("redirect")
 		if redirect == "" {
 			redirect = "/"
 		}
-
+		//TODO: not working
 		http.Redirect(w, r, redirect, http.StatusFound)
 		return
 	}

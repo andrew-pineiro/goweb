@@ -1,6 +1,8 @@
 package middleware
 
 import (
+	"goweb/models"
+	"goweb/utils"
 	"net/http"
 	"time"
 )
@@ -9,12 +11,16 @@ import (
 var SessionStore = make(map[string]string)
 
 // SetSession creates a new session for a user
-func SetSession(w http.ResponseWriter, username string) {
+func SetSession(w http.ResponseWriter, user models.User) {
 	// Generate a session token (you can use JWT or a more secure method)
-	sessionToken := username + "-session"
+	sessionToken := user.Username + "-session"
+
+	//TODO: not working
+	utils.UpdateLastLogin(user.Guid)
 
 	// Store session in memory (use Redis or DB in production)
-	SessionStore[sessionToken] = username
+	//TODO: move this to db
+	SessionStore[sessionToken] = user.Username
 
 	// Create a secure cookie
 	http.SetCookie(w, &http.Cookie{

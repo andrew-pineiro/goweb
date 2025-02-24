@@ -26,6 +26,8 @@ func init() {
 }
 
 func main() {
+	//TODO: work on setting up db if it doesn't exist
+	//TODO: look into CGO_ENABLED depenedencies for cross-platform support
 	initializeApp()
 }
 func initializeApp() {
@@ -99,7 +101,6 @@ func setupRouter() *mux.Router {
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte("404 page not found"))
 	})
-
 	log.Println("STARTUP: Router configured!")
 	return router
 }
