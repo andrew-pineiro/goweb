@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"os"
 
-	"goweb/controllers"
 	"goweb/handlers"
 	"goweb/middleware"
 
@@ -44,8 +43,8 @@ func initializeApp() {
 	router := setupRouter()
 
 	// Load Users
-	log.Printf("STARTUP: Loading users from file")
-	controllers.LoadUsers()
+	// log.Printf("STARTUP: Loading users from file")
+	// controllers.LoadUsers()
 
 	startServer(router)
 }
@@ -79,7 +78,6 @@ func setupRouter() *mux.Router {
 		log.Println("STARTUP: Configuring API endpoint handler")
 		router.HandleFunc("/api/{endpoint}", handlers.APIHandler)
 	}
-
 	// HTML Pages
 	log.Println("STARTUP: Configuring web page handler")
 	router.HandleFunc("/{page}", handlers.LoadPage).Methods("GET")
