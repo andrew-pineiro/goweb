@@ -8,6 +8,7 @@ import (
 
 	"goweb/controllers"
 	"goweb/handlers"
+	"goweb/middleware"
 
 	"github.com/gorilla/mux"
 )
@@ -64,25 +65,34 @@ func setupRouter() *mux.Router {
 	log.Printf("STARTUP: Setting up router")
 	router := mux.NewRouter()
 
-	//Static + JS Files
+	// Public routes
+	// Static + JS Files
 	log.Println("STARTUP: Configuring static file handler")
 	router.PathPrefix("/static").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./www/static"))))
 	router.HandleFunc("/js/{file}", handlers.LoadJSFile)
-
-	//Redirects
+	// Redirects
 	log.Println("STARTUP: Configuring redirect handler")
 	router.HandleFunc("/favicon.ico", handlers.Redirects)
 	router.HandleFunc("/", handlers.Redirects)
-
-	//API Endpoints
+	// API Endpoints
 	if ConfigureApi {
 		log.Println("STARTUP: Configuring API endpoint handler")
 		router.HandleFunc("/api/{endpoint}", handlers.APIHandler)
 	}
 
-	//HTML Pages
+	// HTML Pages
 	log.Println("STARTUP: Configuring web page handler")
 	router.HandleFunc("/{page}", handlers.LoadPage).Methods("GET")
+
+	// Authentication handlers
+	log.Println("STARTUP: Configuring authentication handlers")
+	router.HandleFunc("/login", handlers.LoginHandler).Methods("POST")
+	router.HandleFunc("/logout", handlers.LogoutHandler).Methods("GET")
+
+	// Protected routes (apply middleware)
+	protectedRoutes := router.PathPrefix("/s").Subrouter()
+	protectedRoutes.Use(middleware.AuthMiddleware)
+	protectedRoutes.HandleFunc("/{page}", handlers.LoadPage).Methods("GET")
 
 	//NOT FOUND
 	log.Println("STARTUP: Configuring 404 handler.")

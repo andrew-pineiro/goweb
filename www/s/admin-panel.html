@@ -1,0 +1,42 @@
+{{define "title"}} Admin Panel {{end}}
+
+{{define "head"}}
+<meta name="auth-required" content="true">
+<link rel="stylesheet" href="/static/styles.css">
+{{end}}
+{{define "content"}}
+<div class="admin-panel">
+    <form id="admin-panel">
+
+        <h2>Welcome to Admin Panel</h2>
+        <div class="button-container">
+            <button onclick="restartServer()">Restart Server</button>
+            <button onclick="shutdownServer()">Shutdown Server</button>
+            <button onclick="viewLogs()">View Logs</button>
+            <a href="">Logout</a>
+        </div>
+    </form>
+    <div class="log-container" id="logContainer" style="display: none;">
+        <!-- Logs will be displayed here -->
+    </div>
+</div>
+<script>
+    function restartServer() {
+        // Your code to restart the server goes here
+        alert("Server restarted!");
+    }
+
+    function shutdownServer() {
+        // Your code to shutdown the server goes here
+        alert("Server shutdown!");
+    }
+
+    function viewLogs() {
+        // Your code to fetch and display logs goes here
+        var logContainer = document.getElementById("logContainer");
+        logContainer.style.display = "block";
+        logContainer.innerHTML = "<h3>Server Logs:</h3><p>Log 1</p><p>Log 2</p><p>Log 3</p>";
+    }
+</script>
+<script src="/js/admin.js"></script>
+{{end}}
