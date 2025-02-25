@@ -79,10 +79,6 @@ func LoadPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	page := mux.Vars(r)["page"]
-	// cookie, err := r.Cookie("X-Auth-Token")
-	// if err == nil {
-	// 	rawCookie, _ = url.PathUnescape(cookie.Value)
-	// }
 
 	if !strings.ContainsAny(page, ".") {
 		page += ".html"
