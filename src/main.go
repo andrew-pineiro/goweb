@@ -9,6 +9,7 @@ import (
 
 	"goweb/handlers"
 	"goweb/middleware"
+	"goweb/utils"
 
 	"github.com/gorilla/mux"
 )
@@ -62,6 +63,11 @@ func setupDb() {
 	var filePath = fmt.Sprintf("%s/%s", DBPath, "goweb.db")
 	if _, err := os.Stat(filePath); os.IsNotExist(err) {
 		os.Create(filePath)
+	}
+	currVersion := utils.CheckMigrationVersion()
+	for currVersion < utils.CURR_MIGR_VER || currVersion == -1 {
+		utils.MigrationHandler(currVersion)
+		currVersion = utils.CheckMigrationVersion()
 	}
 	log.Printf("STARTUP: Database setup: %s", filePath)
 }

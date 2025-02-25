@@ -7,11 +7,68 @@ import (
 	"log"
 	"time"
 
+	"github.com/google/uuid"
+	_ "github.com/google/uuid"
 	_ "github.com/mattn/go-sqlite3"
 )
 
-const DB_FILE = "./data/goweb.db"
+const (
+	DB_FILE       = "./data/goweb.db"
+	CURR_MIGR_VER = 1
+)
 
+func CheckMigrationVersion() int {
+	version := 0
+	db, err := sql.Open("sqlite3", DB_FILE)
+	if err != nil {
+		log.Println(err)
+		return -1
+	}
+	defer db.Close()
+	err = db.QueryRow("PRAGMA user_version").Scan(&version)
+
+	if err == sql.ErrNoRows {
+		return version
+	} else if err != nil {
+		log.Println(err)
+		return -1
+	}
+	return version
+}
+func MigrationHandler(version int) {
+	db, err := sql.Open("sqlite3", DB_FILE)
+	if err != nil {
+		log.Printf("ERROR: could not configure migration %s", err)
+		return
+	}
+	defer db.Close()
+	switch version + 1 {
+	case 1:
+		query, _ := db.Prepare("CREATE TABLE IF NOT EXISTS Users (`id` INTEGER PRIMARY KEY AUTOINCREMENT,`guid` VARCHAR(255) NOT NULL, `username` VARCHAR(255) NOT NULL,`email` VARCHAR(255) NOT NULL DEFAULT '',`password` VARCHAR(255) NOT NULL DEFAULT '',`last_login_date` DATETIME NOT NULL DEFAULT '',`last_change_date` DATETIME NOT NULL DEFAULT '');")
+		_, err := query.Exec()
+		if err != nil {
+			log.Printf("ERROR: could not complete migration version %d %s", version, err)
+			break
+		}
+		newUUID := uuid.New()
+		query, _ = db.Prepare("INSERT INTO Users (guid, username, password, email) VALUES (?, ?, ?, ?)")
+
+		//TODO: unhardcode the admin account
+		_, err = query.Exec(newUUID, "admin", HashPassword("goweb25"), "admin@admin.com")
+		if err != nil {
+			log.Printf("ERROR: could not create default admin user")
+			break
+		}
+
+		query, _ = db.Prepare("PRAGMA user_version = 1;")
+		_, err = query.Exec()
+		if err != nil {
+			log.Printf("ERROR: could not update migration version %s", err)
+			break
+		}
+		log.Printf("MIGRATION: Completed version 1 migration")
+	}
+}
 func CheckUserByName(username string) models.User {
 	var user models.User
 	db, err := sql.Open("sqlite3", DB_FILE)
