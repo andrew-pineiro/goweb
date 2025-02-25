@@ -8,6 +8,7 @@ import (
 func AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if _, authenticated := GetSession(r); !authenticated {
+			//TODO: this doesnt work right...
 			http.Redirect(w, r, "/login?redirect="+r.URL.Path, http.StatusFound)
 			return
 		}

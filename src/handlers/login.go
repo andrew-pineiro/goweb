@@ -5,6 +5,7 @@ import (
 	"goweb/middleware"
 	"goweb/models"
 	"goweb/utils"
+	"log"
 	"net/http"
 )
 
@@ -35,8 +36,9 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	if ValidateLogin(user.Username, user.Password) {
 		// Set session if authentication is successful
 		middleware.SetSession(w, user)
-
-		redirect := r.URL.Query().Get("redirect")
+		log.Printf("DEBUG: Parsed Query: %+v", r.URL.Query())
+		redirect := r.FormValue("redirect")
+		log.Printf("DEBUG: redirect found %s", redirect)
 		if redirect == "" {
 			redirect = "/"
 		}

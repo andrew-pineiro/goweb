@@ -44,29 +44,12 @@ func Redirects(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-//	func checkAuthorizedPages(file string, rawCookie string) bool {
-//		fileHandle, err := os.Open(file)
-//		if err != nil {
-//			log.Printf("WARNING: could not check file for authentication - %s", err)
-//			return false
-//		}
-//		defer fileHandle.Close()
-//		scanner := bufio.NewScanner(fileHandle)
-//		for scanner.Scan() {
-//			if strings.Contains(scanner.Text(), `<meta name="auth-required" content="true">`) &&
-//				!handlers.C(rawCookie) {
-//				return true
-//			}
-//		}
-//		return false
-//	}
 func LoadJSFile(w http.ResponseWriter, r *http.Request) {
 	file := mux.Vars(r)["file"]
 	http.ServeFile(w, r, PageRoot+"/js/"+file)
 }
 func LoadPage(w http.ResponseWriter, r *http.Request) {
 	var data string
-	//var rawCookie string
 	var baseExists = true
 	//TODO(#4): implement data injection to pages
 
@@ -85,6 +68,8 @@ func LoadPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	file := path.Join(PageRoot, strings.ToLower(page))
+	log.Printf("DEBUG: working file %s", file)
+
 	//check if file exists
 	if _, err := os.Stat(file); err != nil {
 		log.Printf("%s NOT FOUND: %s", r.RemoteAddr, file)
@@ -97,12 +82,6 @@ func LoadPage(w http.ResponseWriter, r *http.Request) {
 		log.Printf("%s RESTRICTED: %s", r.RemoteAddr, r.RequestURI)
 		return
 	}
-	// if checkAuthorizedPages(file, rawCookie) {
-	// 	//TODO: handle this better like redirect to a login page
-	// 	http.Error(w, "401 unauthorized", http.StatusUnauthorized)
-	// 	log.Printf("%s UNAUTHORIZED: %s", r.RemoteAddr, r.RequestURI)
-	// 	return
-	// }
 
 	baseFile := path.Join(PageRoot, BaseFile)
 	if _, err := os.Stat(baseFile); err != nil {

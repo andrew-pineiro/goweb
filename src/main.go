@@ -106,8 +106,7 @@ func setupRouter() *mux.Router {
 	// Protected routes (apply middleware)
 	protectedRoutes := router.PathPrefix("/s").Subrouter()
 	protectedRoutes.Use(middleware.AuthMiddleware)
-	//TODO: fix this
-	protectedRoutes.HandleFunc("/s/{page}", handlers.LoadPage).Methods("GET")
+	protectedRoutes.HandleFunc("/{page}", handlers.LoadPage).Methods("GET")
 
 	//NOT FOUND
 	log.Println("STARTUP: Configuring 404 handler")
