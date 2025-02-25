@@ -5,18 +5,26 @@ import (
 	"fmt"
 	"goweb/models"
 	"log"
+	"os"
 	"time"
 
 	"github.com/google/uuid"
-	_ "github.com/google/uuid"
 	_ "github.com/mattn/go-sqlite3"
 )
 
-const (
-	DB_FILE       = "./data/goweb.db"
-	CURR_MIGR_VER = 1
-)
+const CURR_MIGR_VER = 1
 
+var DB_FILE string
+
+func InitializeDb(path string) {
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		os.Mkdir(path, 0755)
+	}
+	DB_FILE = fmt.Sprintf("%s/%s", path, "goweb.db")
+	if _, err := os.Stat(DB_FILE); os.IsNotExist(err) {
+		os.Create(DB_FILE)
+	}
+}
 func CheckMigrationVersion() int {
 	version := 0
 	db, err := sql.Open("sqlite3", DB_FILE)
@@ -69,6 +77,8 @@ func MigrationHandler(version int) {
 		log.Printf("MIGRATION: Completed version 1 migration")
 	}
 }
+
+// TODO: make these more generic and then create a repo file
 func CheckUserByName(username string) models.User {
 	var user models.User
 	db, err := sql.Open("sqlite3", DB_FILE)

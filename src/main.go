@@ -2,10 +2,9 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"log"
 	"net/http"
-	"os"
+	"path"
 
 	"goweb/handlers"
 	"goweb/middleware"
@@ -57,19 +56,13 @@ func initializeApp() {
 }
 func setupDb() {
 	log.Println("STARTUP: Initializing Database")
-	if _, err := os.Stat(DBPath); os.IsNotExist(err) {
-		os.Mkdir(DBPath, 0755)
-	}
-	var filePath = fmt.Sprintf("%s/%s", DBPath, "goweb.db")
-	if _, err := os.Stat(filePath); os.IsNotExist(err) {
-		os.Create(filePath)
-	}
+	utils.InitializeDb(DBPath)
 	currVersion := utils.CheckMigrationVersion()
 	for currVersion < utils.CURR_MIGR_VER || currVersion == -1 {
 		utils.MigrationHandler(currVersion)
 		currVersion = utils.CheckMigrationVersion()
 	}
-	log.Printf("STARTUP: Database setup: %s", filePath)
+	log.Printf("STARTUP: Database setup: %s", path.Join(DBPath, "goweb.db"))
 }
 func startServer(router *mux.Router) {
 	server := &http.Server{
